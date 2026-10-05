@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="de" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kreisbewegungen Labor & Trainer – Physik 11. Klasse</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+        .canvas-container {
+            position: relative;
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        }
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glass-card {
+            background: rgba(15, 23, 42, 0.65);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.2s ease-in-out;
+        }
+        input[type=range] {
+            accent-color: #38bdf8;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-sky-500 selection:text-white">
+
+    <!-- Header Navigation -->
+    <header class="sticky top-0 z-50 glass-panel border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
+            <div class="flex items-center space-x-3">
+                <a href="index.html" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition" title="Zurück zur Hauptseite">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </a>
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-sky-500/20">
+                    <i class="fa-solid fa-flask text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-base font-bold text-white leading-tight">Vektor-Labor & Wissenstest</h1>
+                    <p class="text-xs text-sky-400 font-medium">Physik 11. Klasse Gymnasium Bayern</p>
+                </div>
+            </div>
+            
+            <a href="index.html" class="px-3.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition flex items-center gap-1.5">
+                <i class="fa-solid fa-book-open text-emerald-400"></i> Theorie-Lerneinheit
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-grow space-y-10">
+
+        <!-- SECTION: Labor Simulation -->
+        <section class="space-y-6">
+            <div class="border-b border-slate-800 pb-3 flex items-center justify-between">
+                <div>
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-atom text-sky-400"></i> Interaktives Vektor-Labor
+                    </h2>
+                    <p class="text-xs text-slate-400">Variieren Sie $r, \omega, m$ und analysieren Sie Vektoren oder trennen Sie den Faden!</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                
+                <!-- Left: Canvas and Sliders (7 cols) -->
+                <div class="lg:col-span-7 space-y-4">
+                    <div class="glass-panel rounded-2xl p-5 border border-slate-800">
+                        
+                        <div class="canvas-container bg-slate-950 rounded-xl overflow-hidden aspect-[16/10] w-full border border-slate-800 relative">
+                            <canvas id="mainSimCanvas" class="w-full h-full block"></canvas>
+                            
+                            <!-- Overlay legend -->
+                            <div class="absolute top-3 left-3 bg-slate-900/80 backdrop-blur-md p-2.5 rounded-lg border border-slate-800 text-[11px] space-y-1">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-3 h-1 bg-rose-500 rounded"></span>
+                                    <span class="text-slate-200">Bahngeschwindigkeit $\vec{v}$</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="w-3 h-1 bg-purple-500 rounded"></span>
+                                    <span class="text-slate-200">Beschleunigung $\vec{a}_z$</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="w-3 h-1 bg-sky-400 rounded"></span>
+                                    <span class="text-slate-200">Zentripetalkraft $\vec{F}_z$</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Controls -->
+                        <div class="mt-4 flex flex-wrap items-center justify-between gap-3 text-xs">
+                            <div class="flex items-center gap-2">
+                                <button id="btnCutRope" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold transition flex items-center gap-1.5 shadow-lg shadow-rose-600/20">
+                                    <i class="fa-solid fa-scissors"></i> Faden schneiden!
+                                </button>
+                                <button id="btnResetMain" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold border border-slate-700 transition flex items-center gap-1.5">
+                                    <i class="fa-solid fa-rotate-left"></i> Neustart
+                                </button>
+                            </div>
+
+                            <div class="flex items-center gap-2">
+                                <button id="btnToggleVectors" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-sky-300 text-[11px] font-semibold border border-slate-700 transition">
+                                    <i class="fa-solid fa-eye mr-1"></i> Vektoren umschalten
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Sliders -->
+                        <div class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs font-medium">
+                            <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
+                                <div class="flex justify-between items-center mb-1 text-slate-300">
+                                    <label for="radiusInput" class="text-emerald-400 font-semibold">Radius $r$:</label>
+                                    <span id="radiusVal" class="font-mono text-emerald-300 text-xs">2.0 m</span>
+                                </div>
+                                <input type="range" id="radiusInput" min="0.5" max="3.5" step="0.1" value="2.0" class="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer">
+                            </div>
+
+                            <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
+                                <div class="flex justify-between items-center mb-1 text-slate-300">
+                                    <label for="omegaInput" class="text-amber-400 font-semibold">Winkelgeschw. $\omega$:</label>
+                                    <span id="omegaVal" class="font-mono text-amber-300 text-xs">3.14 1/s</span>
+                                </div>
+                                <input type="range" id="omegaInput" min="0.5" max="8.0" step="0.1" value="3.14" class="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer">
+                            </div>
+
+                            <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
+                                <div class="flex justify-between items-center mb-1 text-slate-300">
+                                    <label for="massInput" class="text-sky-400 font-semibold">Masse $m$:</label>
+                                    <span id="massVal" class="font-mono text-sky-300 text-xs">1.0 kg</span>
+                                </div>
+                                <input type="range" id="massInput" min="0.2" max="5.0" step="0.1" value="1.0" class="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Right: Telemetry & Proportionalities (5 cols) -->
+                <div class="lg:col-span-5 space-y-4">
+                    <div class="glass-panel rounded-2xl p-5 shadow-xl border border-slate-800">
+                        <h3 class="text-sm font-bold text-white mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-calculator text-sky-400"></i> Live Telemetrie & Kennwerte
+                        </h3>
+
+                        <div class="grid grid-cols-2 gap-2.5 text-xs">
+                            <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-800">
+                                <span class="text-[11px] text-slate-400 block">Umlaufdauer $T$</span>
+                                <span id="dispT" class="text-base font-mono font-bold text-white">2.00 s</span>
+                                <span class="text-[10px] text-slate-500 block mt-0.5">$T = 2\pi / \omega$</span>
+                            </div>
+
+                            <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-800">
+                                <span class="text-[11px] text-slate-400 block">Winkelgeschw. $\omega$</span>
+                                <span id="dispOmega" class="text-base font-mono font-bold text-amber-400">3.14 1/s</span>
+                                <span class="text-[10px] text-slate-500 block mt-0.5">$\omega = 2\pi / T$</span>
+                            </div>
+
+                            <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-800">
+                                <span class="text-[11px] text-slate-400 block">Bahngeschw. $v$</span>
+                                <span id="dispV" class="text-base font-mono font-bold text-rose-400">6.28 m/s</span>
+                                <span class="text-[10px] text-slate-500 block mt-0.5">$v = \omega \cdot r$</span>
+                            </div>
+
+                            <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-800">
+                                <span class="text-[11px] text-slate-400 block">Beschleunigung $a_z$</span>
+                                <span id="dispA" class="text-base font-mono font-bold text-purple-400">19.74 m/s²</span>
+                                <span class="text-[10px] text-slate-500 block mt-0.5">$a_z = \omega^2 \cdot r$</span>
+                            </div>
+
+                            <div class="col-span-2 p-3 rounded-xl bg-sky-950/40 border border-sky-500/30">
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <span class="text-xs font-semibold text-sky-300 block">Zentripetalkraft $F_z$</span>
+                                        <div class="mt-1">
+                                            <button id="toggleFzFormulaBtn" onclick="document.getElementById('fzFormulaSpan').classList.toggle('hidden');" class="text-[10px] text-sky-400 hover:text-sky-300 underline font-medium">
+                                                <i class="fa-solid fa-eye mr-0.5"></i> Formel aufdecken
+                                            </button>
+                                            <span id="fzFormulaSpan" class="hidden text-[10px] text-slate-300 block font-mono">$F_z = m \cdot a_z = m \cdot \omega^2 \cdot r$</span>
+                                        </div>
+                                    </div>
+                                    <span id="dispF" class="text-xl font-mono font-extrabold text-sky-400">19.74 N</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Proportionalities Summary Box -->
+                    <div class="glass-card rounded-2xl p-5 space-y-2 border-l-4 border-l-purple-500 text-xs">
+                        <h4 class="font-bold text-purple-300 flex items-center gap-1.5">
+                            <i class="fa-solid fa-square-root-variable"></i> Proportionalitäten bei der Zentripetalkraft
+                        </h4>
+                        <ul class="text-slate-300 space-y-1.5 leading-relaxed">
+                            <li>• Doppelte Winkelgeschwindigkeit $\omega \implies$ <strong>4-fache Zentripetalkraft $F_z$</strong> ($F_z \propto \omega^2$)</li>
+                            <li>• Doppelter Radius $r$ (bei konstantem $\omega$) $\implies$ <strong>doppelte Zentripetalkraft $F_z$</strong> ($F_z \propto r$)</li>
+                            <li>• Doppelte Masse $m \implies$ <strong>doppelte Zentripetalkraft $F_z$</strong> ($F_z \propto m$)</li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SECTION: Wissenstest -->
+        <section class="space-y-6 pt-4">
+            <div class="border-b border-slate-800 pb-3 flex items-center justify-between">
+                <div>
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-graduation-cap text-emerald-400"></i> Gymnasium Wissenstest
+                    </h2>
+                    <p class="text-xs text-slate-400">Testen Sie Ihr Wissen mit typischen Aufgabenstellungen aus der 11. Klasse Gymnasium Bayern</p>
+                </div>
+                <span id="quizScore" class="text-xs bg-emerald-500/10 text-emerald-400 px-3 py-1.5 rounded-full border border-emerald-500/20 font-mono font-bold">
+                    Frage 1 / 12
+                </span>
+            </div>
+
+            <!-- Quiz Container -->
+            <div class="glass-panel rounded-2xl p-6 border border-slate-800 max-w-3xl mx-auto space-y-5">
+                <!-- Progress bar -->
+                <div class="w-full bg-slate-900 h-2 rounded-full overflow-hidden">
+                    <div id="quizProgressBar" class="bg-gradient-to-r from-emerald-500 to-sky-500 h-full w-1/12 transition-all duration-300"></div>
+                </div>
+
+                <!-- Question Text -->
+                <div id="quizQuestion" class="text-sm md:text-base font-medium text-white leading-relaxed"></div>
+
+                <!-- Options Grid -->
+                <div id="quizOptions" class="grid grid-cols-1 gap-2.5 pt-2"></div>
+
+                <!-- Explanation / Feedback Box -->
+                <div id="quizFeedback" class="hidden p-4 rounded-xl text-xs leading-relaxed"></div>
+
+                <!-- Next Button & Score Counter -->
+                <div class="flex items-center justify-between pt-3 border-t border-slate-800">
+                    <span id="quizCounterText" class="text-xs text-slate-400 font-mono">Punkte: 0 / 0</span>
+                    <button id="btnNextQuiz" class="hidden px-5 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs transition flex items-center gap-2 shadow-lg shadow-sky-600/20">
+                        <span>Nächste Frage</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="glass-panel border-t border-slate-800 mt-12 py-6 text-center text-xs text-slate-400">
+        <div class="max-w-7xl mx-auto px-4">
+            <p>Interaktives Physik-Labor & Aufgaben-Trainer • LehrplanPLUS Bayern (11. Klasse)</p>
+        </div>
+    </footer>
+
+    <!-- JS Logic -->
+    <script>
+        // Trigger MathJax Typesetting safely
+        function triggerMathJax() {
+            try {
+                if (window.MathJax && MathJax.typesetPromise) {
+                    MathJax.typesetPromise();
+                }
+            } catch(e) {
+                console.warn("MathJax typeset deferred", e);
+            }
+        }
+
+        // Helper Arrow Drawer for Canvas
+        function drawArrow(ctx, fromx, fromy, tox, toy, color, width = 2, label = '') {
+            const headlen = 8;
+            const dx = tox - fromx;
+            const dy = toy - fromy;
+            const angle = Math.atan2(dy, dx);
+            const len = Math.hypot(dx, dy);
+
+            if (len < 2) return;
+
+            ctx.save();
+            ctx.strokeStyle = color;
+            ctx.fillStyle = color;
+            ctx.lineWidth = width;
+
+            ctx.beginPath();
+            ctx.moveTo(fromx, fromy);
+            ctx.lineTo(tox, toy);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(tox, toy);
+            ctx.lineTo(tox - headlen * Math.cos(angle - Math.PI / 6), toy - headlen * Math.sin(angle - Math.PI / 6));
+            ctx.lineTo(tox - headlen * Math.cos(angle + Math.PI / 6), toy - headlen * Math.sin(angle + Math.PI / 6));
+            ctx.closePath();
+            ctx.fill();
+
+            if (label) {
+                ctx.font = 'bold 11px JetBrains Mono, monospace';
+                const lx = tox + 10 * Math.cos(angle);
+                const ly = toy + 10 * Math.sin(angle);
+                ctx.fillText(label, lx - 8, ly + 4);
+            }
+            ctx.restore();
+        }
+
+        // Global DOM and Simulation variables
+        let mainSimCanvas, mainCtx;
+        let radiusInput, omegaInput, massInput;
+        let radiusVal, omegaVal, massVal;
+        let dispT, dispOmega, dispV, dispA, dispF;
+        let btnCutRope, btnResetMain, btnToggleVectors;
+
+        let r_m = 2.0;
+        let omega_rad = 3.14;
+        let m_kg = 1.0;
+
+        let showVectors = true;
+        let isCut = false;
+
+        let currentAngle = 0;
+        let objX = 0, objY = 0;
+        let objVx = 0, objVy = 0;
+        let cutSectorAngle = 0;
+        let cutX = 0, cutY = 0;
+        let lastTimeMain = performance.now();
+
+        // Canvas Sizing
+        function resizeMainCanvas() {
+            if (!mainSimCanvas) return;
+            const container = mainSimCanvas.parentElement;
+            if (container) {
+                mainSimCanvas.width = container.clientWidth || 600;
+                mainSimCanvas.height = container.clientHeight || 375;
+            }
+        }
+
+        // Physics Calculation Update
+        function updatePhysicsValues() {
+            if (!radiusInput || !omegaInput || !massInput) return { T: 2, omega: 3.14, v: 6.28, az: 19.74, Fz: 19.74 };
+
+            r_m = parseFloat(radiusInput.value) || 2.0;
+            omega_rad = parseFloat(omegaInput.value) || 3.14;
+            m_kg = parseFloat(massInput.value) || 1.0;
+
+            if (radiusVal) radiusVal.textContent = r_m.toFixed(1) + ' m';
+            if (omegaVal) omegaVal.textContent = omega_rad.toFixed(2) + ' 1/s';
+            if (massVal) massVal.textContent = m_kg.toFixed(1) + ' kg';
+
+            const T = (2 * Math.PI) / omega_rad;
+            const v = omega_rad * r_m;
+            const az = omega_rad * omega_rad * r_m;
+            const Fz = m_kg * az;
+
+            if (dispT) dispT.textContent = T.toFixed(2) + ' s';
+            if (dispOmega) dispOmega.textContent = omega_rad.toFixed(2) + ' 1/s';
+            if (dispV) dispV.textContent = v.toFixed(2) + ' m/s';
+            if (dispA) dispA.textContent = az.toFixed(2) + ' m/s²';
+            if (dispF) dispF.textContent = Fz.toFixed(1) + ' N';
+
+            return { T, omega: omega_rad, v, az, Fz };
+        }
+
+        // Reset Simulation State
+        function resetSim() {
+            isCut = false;
+            currentAngle = 0;
+            if (btnCutRope) {
+                btnCutRope.disabled = false;
+                btnCutRope.className = "px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold transition flex items-center gap-1.5 shadow-lg shadow-rose-600/20";
+            }
+        }
+
+        // Main Animation Loop
+        function animateMainSim(now) {
+            if (!mainSimCanvas || !mainCtx) return;
+
+            const dt = Math.min((now - lastTimeMain) / 1000, 0.1);
+            lastTimeMain = now;
+
+            mainCtx.clearRect(0, 0, mainSimCanvas.width, mainSimCanvas.height);
+
+            const centerX = mainSimCanvas.width / 2;
+            const centerY = mainSimCanvas.height / 2;
+            const scale = 55; // 1m = 55px
+            const pixelRadius = r_m * scale;
+
+            // Pivot point
+            mainCtx.beginPath();
+            mainCtx.arc(centerX, centerY, 6, 0, Math.PI * 2);
+            mainCtx.fillStyle = '#38bdf8';
+            mainCtx.fill();
+
+            if (!isCut) {
+                currentAngle += omega_rad * dt;
+                currentAngle %= (2 * Math.PI);
+
+                objX = centerX + pixelRadius * Math.cos(currentAngle);
+                objY = centerY + pixelRadius * Math.sin(currentAngle);
+
+                // Circular Track
+                mainCtx.beginPath();
+                mainCtx.arc(centerX, centerY, pixelRadius, 0, Math.PI * 2);
+                mainCtx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+                mainCtx.setLineDash([4, 4]);
+                mainCtx.lineWidth = 1.5;
+                mainCtx.stroke();
+                mainCtx.setLineDash([]);
+
+                // String
+                mainCtx.beginPath();
+                mainCtx.moveTo(centerX, centerY);
+                mainCtx.lineTo(objX, objY);
+                mainCtx.strokeStyle = '#94a3b8';
+                mainCtx.lineWidth = 2;
+                mainCtx.stroke();
+
+                // Object
+                const objRadius = 8 + m_kg * 2;
+                mainCtx.beginPath();
+                mainCtx.arc(objX, objY, objRadius, 0, Math.PI * 2);
+                mainCtx.fillStyle = '#38bdf8';
+                mainCtx.fill();
+                mainCtx.strokeStyle = '#ffffff';
+                mainCtx.lineWidth = 2;
+                mainCtx.stroke();
+
+                // Vectors
+                if (showVectors) {
+                    const physics = updatePhysicsValues();
+                    // Velocity v (tangential, rose)
+                    const vLen = Math.min(physics.v * 12, 85);
+                    const vx = objX - vLen * Math.sin(currentAngle);
+                    const vy = objY + vLen * Math.cos(currentAngle);
+                    drawArrow(mainCtx, objX, objY, vx, vy, '#f43f5e', 2.5, 'v');
+
+                    // Acceleration az (radial to center, purple)
+                    const aLen = Math.min(physics.az * 3.5, 75);
+                    const ax = objX - aLen * Math.cos(currentAngle);
+                    const ay = objY - aLen * Math.sin(currentAngle);
+                    drawArrow(mainCtx, objX, objY, ax, ay, '#a855f7', 2, 'a_z');
+
+                    // Force Fz (radial to center, sky blue)
+                    const fLen = Math.min(physics.Fz * 3.5, 75);
+                    const fx = objX - fLen * Math.cos(currentAngle);
+                    const fy = objY - fLen * Math.sin(currentAngle);
+                    drawArrow(mainCtx, objX, objY, fx, fy, '#38bdf8', 3, 'F_z');
+                }
+
+            } else {
+                // CUT STATE: Move object along straight tangent line
+                objX += objVx * dt;
+                objY += objVy * dt;
+
+                // 1. Ghosted Circular Orbit Track
+                mainCtx.beginPath();
+                mainCtx.arc(centerX, centerY, pixelRadius, 0, Math.PI * 2);
+                mainCtx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+                mainCtx.setLineDash([4, 4]);
+                mainCtx.lineWidth = 1;
+                mainCtx.stroke();
+                mainCtx.setLineDash([]);
+
+                // 2. Highlighted Previous Circular Arc / Sector (Pre-Cut Path)
+                const sectorSpan = Math.PI / 2; // 90 degree arc before cut
+                mainCtx.beginPath();
+                mainCtx.moveTo(centerX, centerY);
+                mainCtx.arc(centerX, centerY, pixelRadius, cutSectorAngle - sectorSpan, cutSectorAngle);
+                mainCtx.fillStyle = 'rgba(56, 189, 248, 0.12)';
+                mainCtx.fill();
+
+                mainCtx.beginPath();
+                mainCtx.arc(centerX, centerY, pixelRadius, cutSectorAngle - sectorSpan, cutSectorAngle);
+                mainCtx.strokeStyle = '#38bdf8';
+                mainCtx.lineWidth = 2.5;
+                mainCtx.stroke();
+
+                // 3. Mark the Trennpunkt (Cut Point) on the circle
+                mainCtx.beginPath();
+                mainCtx.arc(cutX, cutY, 5, 0, Math.PI * 2);
+                mainCtx.fillStyle = '#ef4444';
+                mainCtx.fill();
+                mainCtx.font = 'bold 10px JetBrains Mono, monospace';
+                mainCtx.fillStyle = '#f43f5e';
+                mainCtx.fillText('Trennpunkt', cutX + 8, cutY - 6);
+
+                // 4. Trajectory Path Trail (Straight Tangential Line from Cut Point to Current Position)
+                mainCtx.beginPath();
+                mainCtx.moveTo(cutX, cutY);
+                mainCtx.lineTo(objX, objY);
+                mainCtx.strokeStyle = 'rgba(244, 63, 94, 0.6)';
+                mainCtx.setLineDash([4, 4]);
+                mainCtx.lineWidth = 2;
+                mainCtx.stroke();
+                mainCtx.setLineDash([]);
+
+                // Cut mark at center pivot
+                mainCtx.beginPath();
+                mainCtx.arc(centerX, centerY, 4, 0, Math.PI * 2);
+                mainCtx.fillStyle = '#ef4444';
+                mainCtx.fill();
+
+                // Object moving straight
+                const objRadius = 8 + m_kg * 2;
+                mainCtx.beginPath();
+                mainCtx.arc(objX, objY, objRadius, 0, Math.PI * 2);
+                mainCtx.fillStyle = '#f43f5e';
+                mainCtx.fill();
+                mainCtx.strokeStyle = '#ffffff';
+                mainCtx.lineWidth = 2;
+                mainCtx.stroke();
+
+                // Velocity Arrow
+                drawArrow(mainCtx, objX, objY, objX + objVx * 0.15, objY + objVy * 0.15, '#f43f5e', 2.5, 'v (geradlinig)');
+            }
+
+            requestAnimationFrame(animateMainSim);
+        }
+
+        // ====================================================================
+        // QUIZ DATA & LOGIC (12 Questions)
+        // ====================================================================
+        const quizQuestions = [
+            {
+                q: "1. Ein Karussell benötigt für eine vollständige Umdrehung $T = 4{,}0\\text{ s}$. Wie groß ist seine Winkelgeschwindigkeit $\\omega$?",
+                options: [
+                    "A) $\\omega = 0{,}25\\text{ 1/s}$",
+                    "B) $\\omega = 1{,}57\\text{ 1/s}$",
+                    "C) $\\omega = 3{,}14\\text{ 1/s}$",
+                    "D) $\\omega = 6{,}28\\text{ 1/s}$"
+                ],
+                correct: 1,
+                explanation: "Richtig! $\\omega = \\frac{2\\pi}{T} = \\frac{2\\pi}{4{,}0\\text{ s}} = \\frac{\\pi}{2} \\approx 1{,}57\\text{ 1/s}$."
+            },
+            {
+                q: "2. Wie verändert sich die erforderliche Zentripetalkraft $F_z$, wenn die Bahngeschwindigkeit $v$ bei konstantem Radius $r$ verdoppelt wird?",
+                options: [
+                    "A) Sie verdoppelt sich.",
+                    "B) Sie vervierfacht sich ($F_z \\propto v^2$).",
+                    "C) Sie halbiert sich.",
+                    "D) Sie bleibt unverändert."
+                ],
+                correct: 1,
+                explanation: "Richtig! Da $F_z = m \\cdot \\frac{v^2}{r}$, geht die Geschwindigkeit quadratisch ein. Doppeltes $v$ erfordert die 4-fache Kraft!"
+            },
+            {
+                q: "3. Zwei Kinder A ($r_A = 1\\text{ m}$) und B ($r_B = 3\\text{ m}$) sitzen auf derselben rotierenden Scheibe. Welche Aussage zur Bahngeschwindigkeit $v$ trifft zu?",
+                options: [
+                    "A) Beide Kinder bewegen sich gleich schnell.",
+                    "B) Kind A fährt dreimal so schnell wie Kind B.",
+                    "C) Kind B fährt dreimal so schnell wie Kind A ($v = \\omega \\cdot r$).",
+                    "D) Keine Aussage möglich ohne die Masse der Kinder."
+                ],
+                correct: 2,
+                explanation: "Richtig! Da alle Punkte der Scheibe dieselbe Winkelgeschwindigkeit $\\omega$ besitzen, gilt $v = \\omega \\cdot r$. Dreifacher Radius bedeutet 3-fache Bahngeschwindigkeit."
+            },
+            {
+                q: "4. Ein Hammerwerfer lässt den Hammer los. Auf welcher Bahn bewegt sich die Kugel im Moment des Loslassens weiter?",
+                options: [
+                    "A) Radial nach außen weg vom Werfer.",
+                    "B) Tangential zur bisherigen Kreisbahn geradlinig weiter.",
+                    "C) Entlang einer Parabel zum Kreismittelpunkt.",
+                    "D) In einer vergrößerten Spiralbahn."
+                ],
+                correct: 1,
+                explanation: "Richtig! Nach Newtons 1. Axiom (Trägheitsprinzip) fliegt ein Körper ohne Zentripetalkraft ($F_z = 0$) geradlinig entlang seiner bisherigen Tangente weiter."
+            },
+            {
+                q: "5. Ein Auto fährt mit $v = 20\\text{ m/s}$ durch eine ebene Kurve mit Radius $r = 50\\text{ m}$. Wie groß ist die Zentripetalbeschleunigung $a_z$?",
+                options: [
+                    "A) $a_z = 0{,}4\\text{ m/s}^2$",
+                    "B) $a_z = 8{,}0\\text{ m/s}^2$",
+                    "C) $a_z = 10{,}0\\text{ m/s}^2$",
+                    "D) $a_z = 400\\text{ m/s}^2$"
+                ],
+                correct: 1,
+                explanation: "Richtig! $a_z = \\frac{v^2}{r} = \\frac{20^2}{50} = \\frac{400}{50} = 8{,}0\\text{ m/s}^2$."
+            },
+            {
+                q: "6. Welche reale Kraft wirkt bei der Kurvenfahrt eines PKWs als Zentripetalkraft?",
+                options: [
+                    "A) Die Motorkraft.",
+                    "B) Die Haftreibungskraft zwischen Reifen und Fahrbahn.",
+                    "C) Die Zentrifugalkraft der Luft.",
+                    "D) Die Normalkraft der Fahrbahn."
+                ],
+                correct: 1,
+                explanation: "Richtig! Die Haftreibung $F_H$ zieht das Auto in die Kurve. Auf Eis (sehr kleine Reibung) rutscht das Fahrzeug daher tangential ab."
+            },
+            {
+                q: "7. Wie hängt die Zentripetalkraft $F_z$ vom Radius $r$ ab, wenn die Winkelgeschwindigkeit $\\omega$ konstant gehalten wird?",
+                options: [
+                    "A) $F_z$ ist umgekehrt proportional zu $r$ ($F_z \\propto 1/r$).",
+                    "B) $F_z$ ist proportional zum Radius $r$ ($F_z \\propto r$).",
+                    "C) $F_z$ ist unabhängig vom Radius.",
+                    "D) $F_z$ hängt nur von der Masse ab."
+                ],
+                correct: 1,
+                explanation: "Richtig! Wegen $F_z = m \\cdot \\omega^2 \\cdot r$ wächst die Zentripetalkraft bei konstantem $\\omega$ linear mit $r$."
+            },
+            {
+                q: "8. Ein Satellit umkreist die Erde auf einer kreisförmigen Bahn. Welche Kraft dient als Zentripetalkraft?",
+                options: [
+                    "A) Die Solarkraft.",
+                    "B) Die Gravitationskraft der Erde.",
+                    "C) Der Rückstoß der Triebwerke.",
+                    "D) Der Magnetismus des Erdmagnetfelds."
+                ],
+                correct: 1,
+                explanation: "Richtig! Die Erdanziehungskraft $F_G = G \\frac{M m}{r^2}$ zwingt den Satelliten auf seine Umlaufbahn."
+            },
+            {
+                q: "9. Die Frequenz einer Bohrmaschine beträgt $f = 50\\text{ Hz}$. Wie lange dauert eine Umdrehung $T$?",
+                options: [
+                    "A) $T = 0{,}02\\text{ s}$",
+                    "B) $T = 0{,}5\\text{ s}$",
+                    "C) $T = 2{,}0\\text{ s}$",
+                    "D) $T = 50\\text{ s}$"
+                ],
+                correct: 0,
+                explanation: "Richtig! $T = \\frac{1}{f} = \\frac{1}{50\\text{ Hz}} = 0{,}02\\text{ s}$ (20 Millisekunden)."
+            },
+            {
+                q: "10. Welcher Winkel in Radian (Bogenmaß) entspricht einem Drehwinkel von $180^\circ$?",
+                options: [
+                    "A) $\\frac{\\pi}{2}\\text{ rad}$",
+                    "B) $\\pi\\text{ rad} \\approx 3{,}14\\text{ rad}$",
+                    "C) $2\\pi\\text{ rad} \\approx 6{,}28\\text{ rad}$",
+                    "D) $4\\pi\\text{ rad}$"
+                ],
+                correct: 1,
+                explanation: "Richtig! Ein Vollkreis ($360^\circ$) entspricht $2\\pi\\text{ rad}$, daher entspricht ein Halbkreis ($180^\circ$) genau $\\pi\\text{ rad}$."
+            },
+            {
+                q: "11. Warum bezeichnet man eine gleichförmige Kreisbewegung trotz konstanter Bahngeschwindigkeit $v$ als beschleunigte Bewegung?",
+                options: [
+                    "A) Weil der Betrag der Geschwindigkeit ständig wächst.",
+                    "B) Weil sich die Richtung des Geschwindigkeitsvektors $\\vec{v}$ ständig ändert.",
+                    "C) Weil die Masse des Körpers abnimmt.",
+                    "D) Sie ist gar keine beschleunigte Bewegung."
+                ],
+                correct: 1,
+                explanation: "Richtig! Vektoren haben Betrag UND Richtung. Da $\\vec{v}$ stetig seine Richtung dreht, liegt eine Beschleunigung $\\vec{a}_z$ vor."
+            },
+            {
+                q: "12. Wenn sich die Masse $m$ eines Körpers auf einer Kreisbahn verdoppelt (bei gleichem $r$ und $v$), wie verändert sich die benötigte Zentripetalkraft $F_z$?",
+                options: [
+                    "A) Sie verdoppelt sich ebenfalls ($F_z \\propto m$).",
+                    "B) Sie halbiert sich.",
+                    "C) Sie vervierfacht sich.",
+                    "D) Sie bleibt gleich."
+                ],
+                correct: 0,
+                explanation: "Richtig! Da $F_z = m \\cdot \\frac{v^2}{r}$, ist die Kraft direkt proportional zur Masse $m$."
+            }
+        ];
+
+        let currentQuizIdx = 0;
+        let score = 0;
+
+        let quizQuestionEl, quizOptionsEl, quizFeedbackEl, quizScoreEl, quizProgressBar, quizCounterText, btnNextQuiz;
+
+        function renderQuestion() {
+            if (!quizQuestionEl || !quizOptionsEl) return;
+
+            const q = quizQuestions[currentQuizIdx];
+            quizQuestionEl.innerHTML = q.q;
+            if (quizScoreEl) quizScoreEl.textContent = `Frage ${currentQuizIdx + 1} / ${quizQuestions.length}`;
+            if (quizCounterText) quizCounterText.textContent = `Punkte: ${score} / ${currentQuizIdx}`;
+            if (quizProgressBar) quizProgressBar.style.width = `${((currentQuizIdx + 1) / quizQuestions.length) * 100}%`;
+            
+            if (quizFeedbackEl) quizFeedbackEl.classList.add('hidden');
+            if (btnNextQuiz) btnNextQuiz.classList.add('hidden');
+
+            quizOptionsEl.innerHTML = '';
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 transition text-slate-200 font-medium";
+                btn.innerHTML = opt;
+                btn.addEventListener('click', () => checkAnswer(idx));
+                quizOptionsEl.appendChild(btn);
+            });
+
+            triggerMathJax();
+        }
+
+        function checkAnswer(chosenIdx) {
+            const q = quizQuestions[currentQuizIdx];
+            const buttons = quizOptionsEl.querySelectorAll('button');
+
+            buttons.forEach(b => b.disabled = true);
+
+            if (chosenIdx === q.correct) {
+                buttons[chosenIdx].classList.add('bg-emerald-950/80', 'border-emerald-500/50', 'text-emerald-200');
+                quizFeedbackEl.className = "p-4 rounded-xl text-xs bg-emerald-950/60 border border-emerald-500/40 text-emerald-200";
+                quizFeedbackEl.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400 mr-1.5 text-sm"></i> ${q.explanation}`;
+                score++;
+            } else {
+                buttons[chosenIdx].classList.add('bg-rose-950/80', 'border-rose-500/50', 'text-rose-200');
+                buttons[q.correct].classList.add('bg-emerald-950/80', 'border-emerald-500/50', 'text-emerald-200');
+                quizFeedbackEl.className = "p-4 rounded-xl text-xs bg-rose-950/60 border border-rose-500/40 text-rose-200";
+                quizFeedbackEl.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-400 mr-1.5 text-sm"></i> Leider nicht ganz. ${q.explanation}`;
+            }
+
+            if (quizCounterText) quizCounterText.textContent = `Punkte: ${score} / ${currentQuizIdx + 1}`;
+            if (quizFeedbackEl) quizFeedbackEl.classList.remove('hidden');
+
+            if (currentQuizIdx < quizQuestions.length - 1) {
+                if (btnNextQuiz) btnNextQuiz.classList.remove('hidden');
+            } else {
+                if (btnNextQuiz) {
+                    btnNextQuiz.innerHTML = `<span>Test abgeschlossen! (${score}/${quizQuestions.length})</span> <i class="fa-solid fa-rotate-right ml-1"></i>`;
+                    btnNextQuiz.classList.remove('hidden');
+                    btnNextQuiz.onclick = () => {
+                        currentQuizIdx = 0;
+                        score = 0;
+                        btnNextQuiz.onclick = () => {
+                            if (currentQuizIdx < quizQuestions.length - 1) {
+                                currentQuizIdx++;
+                                renderQuestion();
+                            }
+                        };
+                        renderQuestion();
+                    };
+                }
+            }
+
+            triggerMathJax();
+        }
+
+        // Initialization when DOM is ready
+        window.addEventListener('DOMContentLoaded', () => {
+            mainSimCanvas = document.getElementById('mainSimCanvas');
+            if (mainSimCanvas) mainCtx = mainSimCanvas.getContext('2d');
+
+            radiusInput = document.getElementById('radiusInput');
+            omegaInput = document.getElementById('omegaInput');
+            massInput = document.getElementById('massInput');
+
+            radiusVal = document.getElementById('radiusVal');
+            omegaVal = document.getElementById('omegaVal');
+            massVal = document.getElementById('massVal');
+
+            dispT = document.getElementById('dispT');
+            dispOmega = document.getElementById('dispOmega');
+            dispV = document.getElementById('dispV');
+            dispA = document.getElementById('dispA');
+            dispF = document.getElementById('dispF');
+
+            btnCutRope = document.getElementById('btnCutRope');
+            btnResetMain = document.getElementById('btnResetMain');
+            btnToggleVectors = document.getElementById('btnToggleVectors');
+
+            quizQuestionEl = document.getElementById('quizQuestion');
+            quizOptionsEl = document.getElementById('quizOptions');
+            quizFeedbackEl = document.getElementById('quizFeedback');
+            quizScoreEl = document.getElementById('quizScore');
+            quizProgressBar = document.getElementById('quizProgressBar');
+            quizCounterText = document.getElementById('quizCounterText');
+            btnNextQuiz = document.getElementById('btnNextQuiz');
+
+            if (btnCutRope) {
+                btnCutRope.addEventListener('click', () => {
+                    if (!isCut) {
+                        isCut = true;
+                        cutSectorAngle = currentAngle;
+                        cutX = objX;
+                        cutY = objY;
+                        const physics = updatePhysicsValues();
+                        const scale = 55;
+                        const vScalarPixels = physics.v * scale;
+
+                        objVx = -vScalarPixels * Math.sin(currentAngle);
+                        objVy = vScalarPixels * Math.cos(currentAngle);
+
+                        btnCutRope.disabled = true;
+                        btnCutRope.className = "px-4 py-2 rounded-xl bg-slate-800 text-slate-500 font-bold transition cursor-not-allowed opacity-60";
+                    }
+                });
+            }
+
+            if (btnResetMain) btnResetMain.addEventListener('click', resetSim);
+            if (btnToggleVectors) {
+                btnToggleVectors.addEventListener('click', () => {
+                    showVectors = !showVectors;
+                    btnToggleVectors.classList.toggle('bg-sky-600/30');
+                });
+            }
+
+            if (radiusInput) radiusInput.addEventListener('input', updatePhysicsValues);
+            if (omegaInput) omegaInput.addEventListener('input', updatePhysicsValues);
+            if (massInput) massInput.addEventListener('input', updatePhysicsValues);
+
+            if (btnNextQuiz) {
+                btnNextQuiz.onclick = () => {
+                    if (currentQuizIdx < quizQuestions.length - 1) {
+                        currentQuizIdx++;
+                        renderQuestion();
+                    }
+                };
+            }
+
+            window.addEventListener('resize', resizeMainCanvas);
+
+            resizeMainCanvas();
+            updatePhysicsValues();
+            renderQuestion();
+            
+            // Safe animation loop initiation
+            requestAnimationFrame(animateMainSim);
+            setTimeout(triggerMathJax, 300);
+        });
+    </script>
+</body>
+</html>

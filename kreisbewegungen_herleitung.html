@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="de" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selbstständige Herleitung der Zentripetalkraft – Physik 11. Klasse</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { 50: '#f0f7ff', 100: '#e0effe', 500: '#0284c7', 600: '#0284c7', 700: '#0369a1', 900: '#0c4a6e' }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; }
+        .glass-panel { background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .glass-card { background: rgba(15, 23, 42, 0.65); border: 1px solid rgba(255, 255, 255, 0.08); transition: all 0.2s ease-in-out; }
+        .glass-card:hover { border-color: rgba(56, 189, 248, 0.3); }
+        .formula-box { font-family: 'JetBrains Mono', monospace; background: rgba(2, 132, 199, 0.1); border-left: 4px solid #38bdf8; }
+        .step-badge { width: 2rem; height: 2rem; border-radius: 9999px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.8rem; flex-shrink: 0; }
+        .sketch-frame { background: #faf8f2; border-radius: 0.75rem; padding: 0.5rem; border: 1px solid rgba(255,255,255,0.1); }
+        .sketch-frame img { border-radius: 0.5rem; display: block; width: 100%; height: auto; }
+        details > summary { cursor: pointer; list-style: none; }
+        details > summary::-webkit-details-marker { display: none; }
+        details[open] .chevron { transform: rotate(180deg); }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-sky-500 selection:text-white">
+
+    <!-- Header Navigation -->
+    <header class="sticky top-0 z-50 glass-panel border-b border-slate-800">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
+            <div class="flex items-center space-x-3">
+                <a href="index.html" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition" title="Zurück zur Hauptseite">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </a>
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
+                    <i class="fa-solid fa-square-root-variable text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-base font-bold text-white leading-tight">Selbstständige Herleitung von $F_Z$</h1>
+                    <p class="text-xs text-sky-400 font-medium">Physik 11. Klasse Gymnasium Bayern</p>
+                </div>
+            </div>
+
+            <div class="hidden sm:flex items-center gap-2">
+                <a href="index.html" class="px-3.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-book-open text-emerald-400"></i> Theorie
+                </a>
+                <a href="kreisbewegungen_labor_trainer.html" class="px-3.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-flask text-sky-400"></i> Labor & Test
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-grow space-y-10">
+
+        <!-- INTRO -->
+        <section class="space-y-4">
+            <div class="glass-panel rounded-2xl p-6 border border-indigo-500/30">
+                <h2 class="text-xl font-bold text-white flex items-center gap-2 mb-2">
+                    <i class="fa-solid fa-compass-drawing text-indigo-400"></i> Worum geht es hier?
+                </h2>
+                <p class="text-sm text-slate-300 leading-relaxed">
+                    Bisher weißt du: Bei einer Kreisbewegung muss eine Kraft zum Mittelpunkt wirken – die <strong>Zentripetalkraft $F_Z$</strong>. Aber
+                    <em>wie groß</em> ist sie eigentlich? Auf dieser Seite leitest du die Formel $F_Z = m \cdot \frac{v^2}{r}$ selbst her –
+                    rein geometrisch, nur mit einer Kreisbewegung, zwei Geschwindigkeitsvektoren und ein bisschen Dreiecksgeometrie.
+                    Das Arbeitsblatt dazu („Zentripetalkraft – Herleitung – zum selbst Erarbeiten", Duden Physik 11, G9, Gymnasium Bayern, S. 15)
+                    bearbeitest du Schritt für Schritt: erst <strong>Aufgabe 1</strong>, dann <strong>Aufgabe 2</strong>, dann <strong>Aufgabe 3</strong>.
+                </p>
+                <div class="mt-4 bg-slate-900/70 rounded-xl p-3.5 border border-slate-800 text-xs text-slate-300 flex items-start gap-2.5">
+                    <i class="fa-solid fa-lightbulb text-amber-400 mt-0.5"></i>
+                    <span><strong class="text-amber-300">Tipp:</strong> Versuche jede Aufgabe erst selbst auf einem Blatt Papier zu lösen, bevor du auf
+                    „Lösung anzeigen" klickst. Bei Aufgabe 3 gibt es zusätzlich eine ausführliche Schritt-für-Schritt-Erklärung zum Winkelargument,
+                    falls dir das im Arbeitsblatt zu knapp vorkommt.</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- DIAGRAM: Abb. 4 Teil A + Teil B -->
+        <section class="space-y-4">
+            <div class="border-b border-slate-800 pb-3">
+                <h2 class="text-lg font-bold text-white">Die Ausgangssituation: Abb. 4</h2>
+                <p class="text-xs text-slate-400">Ein Körper bewegt sich gleichförmig (mit konstantem Geschwindigkeitsbetrag $v$) in der Zeit $\Delta t$ von Punkt $A$ nach Punkt $B$ auf einer Kreisbahn mit Radius $r$ und Mittelpunkt $M$.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <!-- Teil A -->
+                <div class="glass-panel rounded-2xl p-4 border border-slate-800">
+                    <p class="text-xs font-bold text-sky-300 mb-2 text-center">Teil A — Kreisbewegung von $A$ nach $B$</p>
+                    <div class="bg-slate-950 rounded-xl border border-slate-800 p-2">
+                        <svg viewBox="0 0 400 300" class="w-full h-auto">
+                            <defs>
+                                <marker id="arrV" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#f43f5e"/>
+                                </marker>
+                            </defs>
+                            <!-- circle arc hint (exakt auf dem Kreis um M mit r=160, passend zu A und B) -->
+                            <path d="M 49.7,205.3 A 160,160 0 0 1 350.3,205.3" fill="none" stroke="#334155" stroke-width="1.5" stroke-dasharray="3,3"/>
+                            <!-- radii -->
+                            <line x1="200" y1="260" x2="132" y2="115" stroke="#94a3b8" stroke-width="2"/>
+                            <line x1="200" y1="260" x2="268" y2="115" stroke="#94a3b8" stroke-width="2"/>
+                            <text x="155" y="200" fill="#94a3b8" font-size="12" font-family="JetBrains Mono">r</text>
+                            <text x="235" y="200" fill="#94a3b8" font-size="12" font-family="JetBrains Mono">r</text>
+                            <!-- angle phi arc at M -->
+                            <path d="M 184,232 A 36,36 0 0 1 216,232" fill="none" stroke="#f59e0b" stroke-width="2"/>
+                            <text x="193" y="222" fill="#f59e0b" font-size="13" font-weight="bold" font-family="JetBrains Mono">Δφ</text>
+                            <!-- M -->
+                            <circle cx="200" cy="260" r="3.5" fill="#38bdf8"/>
+                            <text x="205" y="275" fill="#38bdf8" font-size="13" font-weight="bold" font-family="JetBrains Mono">M</text>
+                            <!-- chord A-B -->
+                            <line x1="132" y1="115" x2="268" y2="115" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="4,3"/>
+                            <text x="155" y="108" fill="#f87171" font-size="11" font-family="JetBrains Mono">Δx ≈ v·Δt</text>
+                            <!-- A, B points -->
+                            <circle cx="132" cy="115" r="4" fill="#f8fafc"/>
+                            <circle cx="268" cy="115" r="4" fill="#f8fafc"/>
+                            <text x="110" y="112" fill="#f8fafc" font-size="13" font-weight="bold" font-family="JetBrains Mono">A</text>
+                            <text x="275" y="112" fill="#f8fafc" font-size="13" font-weight="bold" font-family="JetBrains Mono">B</text>
+                            <!-- v1 at A -->
+                            <line x1="132" y1="115" x2="182" y2="92" stroke="#f43f5e" stroke-width="2.5" marker-end="url(#arrV)"/>
+                            <text x="150" y="80" fill="#f43f5e" font-size="13" font-weight="bold" font-family="JetBrains Mono"><tspan font-style="italic">v</tspan><tspan font-size="9" dy="3">A</tspan></text>
+                            <!-- v2 at B -->
+                            <line x1="268" y1="115" x2="317" y2="138" stroke="#f43f5e" stroke-width="2.5" marker-end="url(#arrV)"/>
+                            <text x="305" y="160" fill="#f43f5e" font-size="13" font-weight="bold" font-family="JetBrains Mono"><tspan font-style="italic">v</tspan><tspan font-size="9" dy="3">E</tspan></text>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Teil B -->
+                <div class="glass-panel rounded-2xl p-4 border border-slate-800">
+                    <p class="text-xs font-bold text-sky-300 mb-2 text-center">Teil B — Vektoraddition $\vec{v}_E = \vec{v}_A + \Delta \vec{v}$</p>
+                    <div class="bg-slate-950 rounded-xl border border-slate-800 p-2 flex items-center justify-center h-full">
+                        <svg viewBox="0 0 260 230" class="w-full h-auto max-h-[240px]">
+                            <defs>
+                                <marker id="arrV2" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse">
+                                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#f43f5e"/>
+                                </marker>
+                                <marker id="arrDv" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse">
+                                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#a78bfa"/>
+                                </marker>
+                            </defs>
+                            <!-- angle arc at O: exakt um O=(60,150) mit r=32, Öffnung ±25.17° passend zu v1/v2 -->
+                            <path d="M 88.94,136.39 A 32,32 0 0 1 88.94,163.61" fill="none" stroke="#f59e0b" stroke-width="2"/>
+                            <text x="106" y="154" fill="#f59e0b" font-size="13" font-weight="bold" font-family="JetBrains Mono">Δφ</text>
+                            <!-- v1 -->
+                            <line x1="60" y1="150" x2="177" y2="95" stroke="#f43f5e" stroke-width="2.5" marker-end="url(#arrV2)"/>
+                            <text x="95" y="95" fill="#f43f5e" font-size="13" font-weight="bold" font-family="JetBrains Mono"><tspan font-style="italic">v</tspan><tspan font-size="9" dy="3">A</tspan></text>
+                            <!-- v2 -->
+                            <line x1="60" y1="150" x2="177" y2="205" stroke="#f43f5e" stroke-width="2.5" marker-end="url(#arrV2)"/>
+                            <text x="95" y="222" fill="#f43f5e" font-size="13" font-weight="bold" font-family="JetBrains Mono"><tspan font-style="italic">v</tspan><tspan font-size="9" dy="3">E</tspan></text>
+                            <!-- delta v: an beiden Enden leicht eingerückt, damit die Pfeilspitzen nicht mit v1/v2 verschmelzen -->
+                            <line x1="177" y1="101" x2="177" y2="199" stroke="#a78bfa" stroke-width="2.5" marker-end="url(#arrDv)"/>
+                            <text x="183" y="155" fill="#a78bfa" font-size="13" font-weight="bold" font-family="JetBrains Mono">Δv</text>
+                            <!-- O -->
+                            <circle cx="60" cy="150" r="3.5" fill="#38bdf8"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <p class="text-[11px] text-slate-500 text-center">Nach: Duden Physik 11 (G9), Gymnasium Bayern, S. 15 (eigene Nachzeichnung der Konstruktion)</p>
+        </section>
+
+        <!-- AUFGABE 1 -->
+        <section class="space-y-3">
+            <div class="glass-card rounded-2xl p-5 border-l-4 border-l-emerald-500">
+                <div class="flex items-center gap-3 mb-2">
+                    <div class="step-badge bg-emerald-500/20 text-emerald-400">1</div>
+                    <h3 class="font-bold text-white text-sm">Orientierung und Länge von $\vec{v}_A$ und $\vec{v}_E$</h3>
+                </div>
+                <p class="text-xs text-slate-300 leading-relaxed mb-3">
+                    Erkläre die Orientierung der Geschwindigkeitsvektoren $\vec{v}_A$ und $\vec{v}_E$ in Teil A. Wieso ist die Länge der beiden
+                    gezeigten Vektoren gleich: $|\vec{v}_A| = |\vec{v}_E|$, also $v_A = v_E = v$?
+                </p>
+                <details class="group">
+                    <summary class="flex items-center gap-2 text-xs font-semibold text-emerald-400 hover:text-emerald-300 w-fit">
+                        <i class="fa-solid fa-chevron-down chevron transition-transform text-[10px]"></i> Lösung anzeigen
+                    </summary>
+                    <div class="mt-3 bg-slate-900/70 rounded-xl p-4 border border-slate-800 text-xs text-slate-300 leading-relaxed space-y-2">
+                        <p>$\vec{v}_A$ und $\vec{v}_E$ verlaufen <strong>tangential</strong> zur Kreisbahn, stehen also jeweils senkrecht auf dem
+                        Radius an ihrem Punkt ($\vec{v}_A \perp \overline{MA}$ bei $A$, $\vec{v}_E \perp \overline{MB}$ bei $B$).</p>
+                        <p>Da die Bewegung <strong>gleichförmig</strong> ist, ändert sich nur die Richtung, nicht der Betrag der
+                        Geschwindigkeit. Deshalb sind beide Vektoren gleich lang: $|\vec{v}_A| = |\vec{v}_E| = v$.</p>
+                    </div>
+                </details>
+            </div>
+        </section>
+
+        <!-- AUFGABE 2 -->
+        <section class="space-y-3">
+            <div class="glass-card rounded-2xl p-5 border-l-4 border-l-sky-500">
+                <div class="flex items-center gap-3 mb-2">
+                    <div class="step-badge bg-sky-500/20 text-sky-400">2</div>
+                    <h3 class="font-bold text-white text-sm">Die zurückgelegte Strecke $\Delta x = v \cdot \Delta t$</h3>
+                </div>
+                <p class="text-xs text-slate-300 leading-relaxed mb-3">
+                    Für die zurückgelegte Strecke zwischen $A$ und $B$ gilt nach der Zeichnung $\Delta x = v \cdot \Delta t$. Wieso? Und wie entsteht
+                    daraus das gleichschenklige Dreieck $\Delta MAB$?
+                </p>
+                <details class="group">
+                    <summary class="flex items-center gap-2 text-xs font-semibold text-sky-400 hover:text-sky-300 w-fit">
+                        <i class="fa-solid fa-chevron-down chevron transition-transform text-[10px]"></i> Lösung anzeigen
+                    </summary>
+                    <div class="mt-3 bg-slate-900/70 rounded-xl p-4 border border-slate-800 text-xs text-slate-300 leading-relaxed space-y-2">
+                        <p>Da der <strong>Geschwindigkeitsbetrag</strong> $v$ konstant ist (nur die Richtung ändert sich, siehe Aufgabe 1), gilt
+                        für die auf der Bahn zurückgelegte Strecke allgemein $v = \frac{\Delta x}{\Delta t}$, umgestellt also
+                        $\Delta x = v \cdot \Delta t$.</p>
+                        <p>Für kleine Zeitspannen $\Delta t$ (und damit kleine Winkel $\Delta \varphi$) ist der Kreisbogen zwischen $A$ und $B$
+                        näherungsweise so lang wie die gerade Verbindungsstrecke (Sehne) $\overline{AB}$. Zusammen mit den beiden Radien
+                        $\overline{MA}$ und $\overline{MB}$ (beide mit Länge $r$) entsteht so das <strong>gleichschenklige Dreieck</strong>
+                        $\Delta MAB$ mit Spitzenwinkel $\Delta \varphi$ bei $M$ — „gleichschenklig" bedeutet dabei einfach, dass zwei Seiten des
+                        Dreiecks gleich lang sind (hier die beiden Radien $\overline{MA} = \overline{MB} = r$, die „Schenkel").</p>
+                    </div>
+                </details>
+            </div>
+        </section>
+
+        <!-- AUFGABE 3 -->
+        <section class="space-y-3">
+            <div class="glass-card rounded-2xl p-5 border-l-4 border-l-rose-500">
+                <div class="flex items-center gap-3 mb-2">
+                    <div class="step-badge bg-rose-500/20 text-rose-400">3</div>
+                    <h3 class="font-bold text-white text-sm">Die Winkel sind gleich groß – und daraus folgt $F_Z$</h3>
+                </div>
+                <p class="text-xs text-slate-300 leading-relaxed mb-3">
+                    Die beiden in Teil A und Teil B vorkommenden Winkel $\Delta \varphi$ sind gleich groß! Begründe das. Stelle dann mithilfe von
+                    $\sin\left(\frac{\Delta \varphi}{2}\right)$ die Seitenverhältnisse in beiden (gleichschenkligen) Dreiecken auf und setze sie
+                    gleich. Leite daraus eine Gleichung für die Zentripetalbeschleunigung $a_{ZP} = \frac{\Delta v}{\Delta t}$ und mithilfe von
+                    $F_Z = m \cdot a_{ZP}$ eine Gleichung für die Zentripetalkraft her. Was lässt sich über die <em>Richtung</em> von $F_Z$ sagen?
+                </p>
+            </div>
+
+            <!-- Warum sind die Winkel gleich: guided breakdown (optional vertiefung) -->
+            <details class="group glass-panel rounded-2xl p-5 border border-amber-500/30">
+                <summary class="flex items-start gap-2.5 cursor-pointer list-none">
+                    <i class="fa-solid fa-magnifying-glass text-amber-400 mt-0.5"></i>
+                    <div class="flex-1">
+                        <div class="flex items-center gap-2 flex-wrap mb-1">
+                            <span class="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-bold uppercase tracking-wide">Bonus · optional</span>
+                            <h4 class="text-sm font-bold text-amber-300">Erklärung zum Winkel $\Delta \varphi$</h4>
+                        </div>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            „Die beiden Winkel sind gleich groß" steht im Arbeitsblatt in einem einzigen Satz – das ist der schwierigste Sprung der
+                            ganzen Herleitung. Für die Formel selbst reicht es, dieses Ergebnis einfach zu akzeptieren. Wer es genauer wissen will,
+                            findet hier die drei Gedankenschritte dahinter, jeweils mit einer Handskizze dazu.
+                        </p>
+                    </div>
+                    <i class="fa-solid fa-chevron-down chevron transition-transform text-amber-400 text-xs mt-1.5 flex-shrink-0"></i>
+                </summary>
+                <div class="space-y-5 mt-5">
+
+                <!-- Schritt 1 -->
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4 items-start">
+                    <div class="md:col-span-2 sketch-frame">
+                        <img src="herleitung-frage-stufenwinkel.png" alt="Skizze: Warum ist der Winkel Δφ zwischen v_A und v_E?">
+                    </div>
+                    <div class="md:col-span-3 space-y-2">
+                        <div class="flex items-center gap-2">
+                            <div class="step-badge bg-amber-500/20 text-amber-400 text-[11px]">1</div>
+                            <h5 class="text-xs font-bold text-white">Die eigentliche Frage</h5>
+                        </div>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Wir kennen zwei Winkel $\Delta \varphi$: den <strong>Winkel zwischen den beiden Radien</strong> $\overline{MA}$ und
+                            $\overline{MB}$ in Teil A (unten in der Skizze, am Kreismittelpunkt $M$), und den
+                            <strong>Winkel zwischen den Vektoren $\vec{v}_A$ und $\vec{v}_E$</strong> im Vektordreieck von Teil B (oben in der
+                            Skizze). Für $\sin\left(\frac{\Delta\varphi}{2}\right)$ müssen wir in <em>beiden</em> Dreiecken denselben Winkel
+                            einsetzen – also: Sind das wirklich zwei gleich große Winkel, oder nur zufällig gleich benannt?
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Schritt 2 -->
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4 items-start">
+                    <div class="md:col-span-2 sketch-frame">
+                        <img src="herleitung-gedrehte-geschwindigkeitspfeile.png" alt="Skizze: v_A und v_E jeweils als um 90° gedrehte Radiusrichtung">
+                    </div>
+                    <div class="md:col-span-3 space-y-2">
+                        <div class="flex items-center gap-2">
+                            <div class="step-badge bg-amber-500/20 text-amber-400 text-[11px]">2</div>
+                            <h5 class="text-xs font-bold text-white">Beide Geschwindigkeiten sind „gedrehte Radien"</h5>
+                        </div>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Aus Aufgabe 1 wissen wir: $\vec{v}_A \perp \overline{MA}$ und $\vec{v}_E \perp \overline{MB}$. Das heißt, $\vec{v}_A$
+                            entsteht, indem man die Richtung von $\overline{MA}$ um $90^\circ$ dreht – und $\vec{v}_E$ entsteht genauso aus
+                            $\overline{MB}$, um denselben Winkel $90^\circ$ und im <strong>gleichen Drehsinn</strong>. Die Skizze zeigt beide
+                            Radiusrichtungen zusammen mit ihren um $90^\circ$ gedrehten Geschwindigkeitspfeilen (die kleinen rechten Winkel sind
+                            blau markiert).
+                        </p>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Anschaulich: Wenn man zwei Zeigerarme (hier die Radien) um den gleichen Winkel im gleichen Sinn weiterdreht, bleibt der
+                            Winkel <em>zwischen</em> ihnen unverändert. Dasselbe muss also auch für die gedrehten Zeiger $\vec{v}_A$ und
+                            $\vec{v}_E$ gelten: Der Winkel zwischen ihnen ist genau wieder $\Delta \varphi$.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Schritt 3 -->
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4 items-start">
+                    <div class="md:col-span-2 sketch-frame">
+                        <img src="herleitung-stufenwinkel-beweis.png" alt="Skizze: Beweis über Stufenwinkel mit Hilfslinien g, h, k">
+                    </div>
+                    <div class="md:col-span-3 space-y-2">
+                        <div class="flex items-center gap-2">
+                            <div class="step-badge bg-amber-500/20 text-amber-400 text-[11px]">3</div>
+                            <h5 class="text-xs font-bold text-white">Der strenge Beweis: Stufenwinkel</h5>
+                        </div>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Das lässt sich sauber mit <strong>Stufenwinkeln</strong> zeigen (das kennst du aus der Mittelstufen-Geometrie: an
+                            zwei parallelen Geraden, die von einer dritten Geraden geschnitten werden, sind Stufenwinkel gleich groß):
+                        </p>
+                        <ul class="text-xs text-slate-300 leading-relaxed list-disc list-inside space-y-1 pl-1">
+                            <li>Verlängere den Radius $\overline{MB}$ zu einer vollständigen Geraden $g$.</li>
+                            <li>Zeichne durch $A$ eine Gerade $h$, die <strong>parallel zu $g$</strong> verläuft ($g \parallel h$) – das ist die
+                            „an $A$ verschobene" Richtung von $\overline{MB}$.</li>
+                            <li>Die Gerade $k$ (die Verlängerung von $\overline{MA}$) schneidet als <strong>Transversale</strong> beide
+                            Parallelen: unten bei $M$ (dort liegt der Winkel $\Delta \varphi$ zwischen $k$ und $g$) und oben bei $A$ (dort liegt
+                            der Stufenwinkel zu $\Delta \varphi$ zwischen $k$ und $h$ – im Bild orange markiert).</li>
+                            <li>Weil $g \parallel h$, sind diese beiden Winkel als Stufenwinkel <strong>gleich groß</strong>: Der Winkel bei $A$
+                            zwischen $k$ (also $\overline{MA}$) und $h$ (also der zu $\overline{MB}$ parallelen Richtung) ist ebenfalls
+                            $\Delta \varphi$.</li>
+                            <li>Da $\vec{v}_A \perp k$ und $\vec{v}_E \perp h$ (weil $h \parallel \overline{MB}$), sind $\vec{v}_A$ und
+                            $\vec{v}_E$ wieder genau die um $90^\circ$ gedrehten Schenkel dieses Winkels – ihr Zwischenwinkel bleibt
+                            $\Delta \varphi$. $\blacksquare$</li>
+                        </ul>
+                        <p class="text-xs text-slate-400 leading-relaxed italic">
+                            Kurzfassung für dein Arbeitsblatt: Der Winkel zwischen den Radien in Teil A und der Winkel zwischen den
+                            Geschwindigkeitsvektoren in Teil B sind <strong>Stufenwinkel an parallelen Hilfsgeraden</strong> – deshalb sind
+                            beide Dreiecke in Bezug auf $\Delta \varphi$ gleich, und du darfst ihre Seitenverhältnisse gleichsetzen.
+                        </p>
+                    </div>
+                </div>
+            </details>
+
+            <!-- Final solution reveal -->
+            <div class="glass-card rounded-2xl p-5 border-l-4 border-l-rose-500">
+                <details class="group">
+                    <summary class="flex items-center gap-2 text-xs font-semibold text-rose-400 hover:text-rose-300 w-fit">
+                        <i class="fa-solid fa-chevron-down chevron transition-transform text-[10px]"></i> Vollständige Lösung & Formel anzeigen
+                    </summary>
+                    <div class="mt-3 bg-slate-900/70 rounded-xl p-4 border border-slate-800 text-xs text-slate-300 leading-relaxed space-y-3">
+                        <p>Weil beide Dreiecke (das gleichschenklige Dreieck $\Delta MAB$ in Teil A und das Vektordreieck in Teil B) den
+                        gleichen Spitzenwinkel $\Delta \varphi$ und jeweils zwei gleich lange Schenkel haben, sind entsprechende
+                        Seitenverhältnisse gleich. Halbiert man den Spitzenwinkel (die Höhe auf die Basis halbiert bei einem gleichschenkligen
+                        Dreieck immer auch den Spitzenwinkel und steht senkrecht auf der Basis), entstehen in beiden Dreiecken zwei
+                        <strong>rechtwinklige Teildreiecke</strong> mit Winkel $\frac{\Delta \varphi}{2}$ an der Spitze – deshalb darf man dort
+                        ganz normal mit $\sin\left(\frac{\Delta\varphi}{2}\right) = \frac{\text{Gegenkathete}}{\text{Hypotenuse}}$ rechnen:</p>
+                        <div class="formula-box p-3 rounded-lg text-sky-300">
+                            $$\text{Teil B: } \sin\left(\frac{\Delta\varphi}{2}\right) = \frac{\Delta v / 2}{v} = \frac{\Delta v}{2v}
+                            \qquad\qquad
+                            \text{Teil A: } \sin\left(\frac{\Delta\varphi}{2}\right) = \frac{\Delta x / 2}{r} = \frac{v \cdot \Delta t}{2r}$$
+                        </div>
+                        <p>Gleichsetzen liefert:</p>
+                        <div class="formula-box p-3 rounded-lg text-sky-300">
+                            $$\frac{\Delta v}{2v} = \frac{v \cdot \Delta t}{2r} \quad\implies\quad \frac{\Delta v}{\Delta t} = \frac{v^2}{r}$$
+                        </div>
+                        <p>Mit der Definition der Beschleunigung $a = \frac{\Delta v}{\Delta t}$ ist das bereits die
+                        <strong>Zentripetalbeschleunigung</strong>, und mit $F_Z = m \cdot a_{ZP}$ sowie $v = \omega \cdot r$ folgt die
+                        Zentripetalkraft:</p>
+                        <div class="formula-box p-3 rounded-lg text-emerald-300">
+                            $$a_{ZP} = \frac{v^2}{r} = \omega^2 r \qquad\qquad F_Z = m \cdot \frac{v^2}{r} = m \cdot \omega^2 \cdot r$$
+                        </div>
+                        <p><strong class="text-rose-300">Richtung:</strong> $\vec{a}_{ZP}$ ist (laut Definition $a = \Delta v / \Delta t$)
+                        parallel zu $\Delta \vec{v}$. Verschiebt man den Vektor $\Delta \vec{v}$ aus Teil B parallel an den Punkt $P$ genau in
+                        der Mitte des Kreisbogens zwischen $A$ und $B$ (in Teil A), zeigt er <strong>radial zum Kreismittelpunkt $M$</strong>.
+                        Die Zentripetalbeschleunigung – und damit auch die Zentripetalkraft $\vec{F}_Z$ – ist also stets zum Mittelpunkt der
+                        Kreisbahn gerichtet.</p>
+                    </div>
+                </details>
+            </div>
+        </section>
+
+        <!-- RESULT BOX -->
+        <section>
+            <div class="glass-panel rounded-2xl p-6 border border-emerald-500/30 bg-gradient-to-br from-emerald-950/30 to-slate-900">
+                <h3 class="text-sm font-bold text-emerald-300 flex items-center gap-2 mb-3">
+                    <i class="fa-solid fa-flag-checkered"></i> Ergebnis deiner Herleitung
+                </h3>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center">
+                    <div class="bg-slate-900 rounded-xl p-3.5 border border-slate-800">
+                        <span class="text-[11px] text-slate-400 block mb-1">Zentripetalbeschleunigung</span>
+                        <span class="font-mono text-base font-bold text-purple-300">$a_{ZP} = \dfrac{v^2}{r} = \omega^2 r$</span>
+                    </div>
+                    <div class="bg-slate-900 rounded-xl p-3.5 border border-slate-800">
+                        <span class="text-[11px] text-slate-400 block mb-1">Zentripetalkraft</span>
+                        <span class="font-mono text-base font-bold text-sky-300">$F_Z = m \dfrac{v^2}{r} = m \omega^2 r$</span>
+                    </div>
+                    <div class="bg-slate-900 rounded-xl p-3.5 border border-slate-800">
+                        <span class="text-[11px] text-slate-400 block mb-1">Richtung</span>
+                        <span class="font-mono text-base font-bold text-rose-300">radial, zum Mittelpunkt $M$</span>
+                    </div>
+                </div>
+                <a href="kreisbewegungen_labor_trainer.html" class="mt-5 w-full flex items-center justify-between px-5 py-3 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-bold text-xs transition shadow-lg shadow-sky-500/20">
+                    <span><i class="fa-solid fa-flask mr-1.5"></i> Jetzt die Formel im Vektor-Labor ausprobieren</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="glass-panel border-t border-slate-800 mt-12 py-6 text-center text-xs text-slate-400">
+        <div class="max-w-5xl mx-auto px-4">
+            <p>Interaktive Lernplattform Kreisbewegungen • LehrplanPLUS Gymnasium Bayern (11. Klasse)</p>
+            <p class="text-[11px] text-slate-500 mt-1">Herleitung nach: Duden Physik 11 (G9), Gymnasium Bayern, S. 15</p>
+        </div>
+    </footer>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise();
+            }, 300);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="de" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kreisbewegungen – Physik 11. Klasse (LehrplanPLUS Bayern)</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            500: '#0284c7',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            900: '#0c4a6e',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+        .canvas-container {
+            position: relative;
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        }
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glass-card {
+            background: rgba(15, 23, 42, 0.65);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.2s ease-in-out;
+        }
+        .glass-card:hover {
+            border-color: rgba(56, 189, 248, 0.3);
+        }
+        input[type=range] {
+            accent-color: #38bdf8;
+        }
+        .formula-box {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(2, 132, 199, 0.1);
+            border-left: 4px solid #38bdf8;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-sky-500 selection:text-white">
+
+    <!-- Header Navigation -->
+    <header class="sticky top-0 z-50 glass-panel border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-sky-500/20">
+                    <i class="fa-solid fa-arrows-spin text-xl animate-spin" style="animation-duration: 8s;"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold text-white leading-tight">Gleichförmige Kreisbewegungen</h1>
+                    <p class="text-xs text-sky-400 font-medium">Physik 11. Klasse • Gymnasium Bayern (LehrplanPLUS)</p>
+                </div>
+            </div>
+            
+            <nav class="hidden md:flex items-center space-x-1 text-sm font-medium text-slate-300">
+                <a href="#grundlagen" class="px-3 py-1.5 rounded-lg hover:text-white hover:bg-slate-800 transition"><i class="fa-solid fa-book-open text-emerald-400 mr-1.5"></i>1. Grundgrößen</a>
+                <a href="#geschwindigkeiten" class="px-3 py-1.5 rounded-lg hover:text-white hover:bg-slate-800 transition"><i class="fa-solid fa-gauge-high text-amber-400 mr-1.5"></i>2. $v$ & $\omega$</a>
+                <a href="#einstiegsexperiment" class="px-3 py-1.5 rounded-lg hover:text-white hover:bg-slate-800 transition"><i class="fa-solid fa-car text-rose-400 mr-1.5"></i>3. Idee $F_z$</a>
+                <a href="#praxis" class="px-3 py-1.5 rounded-lg hover:text-white hover:bg-slate-800 transition"><i class="fa-solid fa-graduation-cap text-indigo-400 mr-1.5"></i>4. Alltag & Quiz</a>
+                <a href="kreisbewegungen_herleitung.html" class="px-3.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-semibold transition shadow-lg shadow-indigo-600/30 flex items-center gap-1.5">
+                    <i class="fa-solid fa-square-root-variable text-xs"></i> Herleitung $F_z$
+                </a>
+                <a href="kreisbewegungen_labor_trainer.html" class="px-3.5 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white font-semibold transition shadow-lg shadow-sky-600/30 flex items-center gap-1.5">
+                    <i class="fa-solid fa-flask text-xs"></i> Vektor-Labor & Test
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-grow space-y-12">
+
+        <!-- HAUPTMENÜ -->
+        <section class="space-y-5 pt-2">
+            <div class="text-center space-y-1.5 max-w-2xl mx-auto">
+                <h2 class="text-xl font-bold text-white">Womit möchtest du starten?</h2>
+                <p class="text-xs text-slate-400">Wähle einen der drei Bereiche.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <a href="#grundlagen" class="glass-panel rounded-2xl p-6 border border-emerald-500/30 flex flex-col items-center text-center gap-3 group hover:border-emerald-400/50 transition">
+                    <div class="w-14 h-14 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-lg shadow-emerald-500/20">
+                        <i class="fa-solid fa-book-open text-xl"></i>
+                    </div>
+                    <h3 class="font-bold text-white text-base">Grundgrößen zur Wiederholung</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed">Umlaufdauer, Winkel, Frequenz, $v$ &amp; $\omega$, das Einstiegsexperiment
+                    und Anwendungsbeispiele zur Zentripetalkraft.</p>
+                    <span class="text-xs font-semibold text-emerald-400 mt-auto pt-1 group-hover:text-emerald-300">Zur Wiederholung <i class="fa-solid fa-arrow-right ml-0.5"></i></span>
+                </a>
+                <a href="kreisbewegungen_herleitung.html" class="glass-panel rounded-2xl p-6 border border-purple-500/30 flex flex-col items-center text-center gap-3 group hover:border-purple-400/50 transition">
+                    <div class="w-14 h-14 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
+                        <i class="fa-solid fa-square-root-variable text-xl"></i>
+                    </div>
+                    <h3 class="font-bold text-white text-base">Theoretische Herleitung für $F_z$</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed">Leite die Formel $F_z = m \frac{v^2}{r}$ selbst geometrisch her, Schritt
+                    für Schritt geführt.</p>
+                    <span class="text-xs font-semibold text-purple-400 mt-auto pt-1 group-hover:text-purple-300">Jetzt herleiten <i class="fa-solid fa-arrow-right ml-0.5"></i></span>
+                </a>
+                <a href="kreisbewegungen_labor_trainer.html" class="glass-panel rounded-2xl p-6 border border-sky-500/30 flex flex-col items-center text-center gap-3 group hover:border-sky-400/50 transition">
+                    <div class="w-14 h-14 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-sky-500/20">
+                        <i class="fa-solid fa-flask text-xl"></i>
+                    </div>
+                    <h3 class="font-bold text-white text-base">Vektor-Labor und Test</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed">Experimentiere mit $r, \omega, m$ und schließe mit dem
+                    12-Fragen-Wissenstest ab.</p>
+                    <span class="text-xs font-semibold text-sky-400 mt-auto pt-1 group-hover:text-sky-300">Zum Labor &amp; Test <i class="fa-solid fa-arrow-right ml-0.5"></i></span>
+                </a>
+            </div>
+        </section>
+
+        <!-- SECTION 1: Grundgrößen -->
+        <section id="grundlagen" class="space-y-6 pt-2">
+            <div class="border-b border-slate-800 pb-3 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-sm">1</div>
+                    <div>
+                        <h2 class="text-xl font-bold text-white">Grundgrößen der gleichförmigen Kreisbewegung</h2>
+                        <p class="text-xs text-slate-400">Umlaufdauer, Drehwinkel im Bogenmaß und Frequenz</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Card 1: Umlaufdauer -->
+                <div class="glass-card rounded-2xl p-5 space-y-3">
+                    <div class="flex justify-between items-start">
+                        <h3 class="font-bold text-white text-base">Umlaufdauer $T$</h3>
+                        <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 text-xs font-mono font-semibold">Einheit: $\text{s}$</span>
+                    </div>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Die Umlaufdauer (Periodendauer) $T$ gibt die Zeitspanne an, die ein Körper für <strong>genau eine vollständige Umdrehung</strong> ($360^\circ$ bzw. $2\pi \text{ rad}$) benötigt.
+                    </p>
+                    <div class="formula-box p-3 rounded-lg text-xs font-mono text-emerald-300">
+                        $$T = \frac{\Delta t}{N}$$
+                        <span class="text-[10px] text-slate-400 block mt-1">($N$ = Anzahl der Umdrehungen in der Zeit $\Delta t$)</span>
+                    </div>
+                </div>
+
+                <!-- Card 2: Drehwinkel im Bogenmaß -->
+                <div class="glass-card rounded-2xl p-5 space-y-3">
+                    <div class="flex justify-between items-start">
+                        <h3 class="font-bold text-white text-base">Drehwinkel $\Delta \varphi$ (Bogenmaß)</h3>
+                        <span class="px-2 py-0.5 rounded bg-sky-500/10 text-sky-400 text-xs font-mono font-semibold">Einheit: $\text{rad}$</span>
+                    </div>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Der Drehwinkel $\Delta \varphi$ wird im **Bogenmaß** angegeben: Das Verhältnis der überstrichenen Bogenlänge $s$ zum Radius $r$.
+                    </p>
+                    <div class="formula-box p-3 rounded-lg text-xs font-mono text-sky-300">
+                        $$\Delta \varphi = \frac{s}{r} \quad \implies \quad 360^\circ = 2\pi \text{ rad}$$
+                    </div>
+                </div>
+
+                <!-- Card 3: Frequenz -->
+                <div class="glass-card rounded-2xl p-5 space-y-3 border-l-4 border-l-amber-500">
+                    <div class="flex justify-between items-start">
+                        <h3 class="font-bold text-white text-base">Frequenz $f$</h3>
+                        <span class="px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 text-xs font-mono font-semibold">Einheit: $\text{Hz} = \text{1/s}$</span>
+                    </div>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Die Frequenz $f$ gibt an, wie viele vollständige Umdrehungen pro Sekunde erfolgen. Sie ist der Kehrwert der Umlaufdauer $T$.
+                    </p>
+                    <div class="formula-box p-3 rounded-lg text-xs font-mono text-amber-300">
+                        $$f = \frac{1}{T} = \frac{N}{\Delta t}$$
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: Bahngeschwindigkeit v und Winkelgeschwindigkeit omega -->
+        <section id="geschwindigkeiten" class="space-y-6 pt-4">
+            <div class="border-b border-slate-800 pb-3 flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-sm">2</div>
+                <div>
+                    <h2 class="text-xl font-bold text-white">Bahngeschwindigkeit $v$ und Winkelgeschwindigkeit $\omega$</h2>
+                    <p class="text-xs text-slate-400">Didaktischer Aufbau: Von der bekannten Streckengeschwindigkeit zur Rotationsgeschwindigkeit</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                
+                <!-- Left Column: Explanation -->
+                <div class="lg:col-span-5 space-y-4">
+                    <!-- Step 1: Bahngeschwindigkeit v -->
+                    <div class="glass-card rounded-2xl p-5 space-y-3 border-l-4 border-l-rose-500">
+                        <h3 class="text-base font-bold text-rose-400 flex items-center gap-2">
+                            <i class="fa-solid fa-gauge-high"></i> 1. Bahngeschwindigkeit $v$
+                        </h3>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Bei einer vollen Umdrehung legt der Körper in der Zeit $T$ den gesamten Kreisumfang $s = 2\pi \cdot r$ zurück. Die Bahngeschwindigkeit steht immer <strong>tangential</strong> auf der Kreisbahn.
+                        </p>
+                        <div class="formula-box p-3 rounded-lg text-xs font-mono text-rose-300">
+                            $$v = \frac{\text{Umfang}}{\text{Umlaufdauer}} = \frac{2\pi \cdot r}{T}$$
+                            <span class="text-[10px] text-slate-400 block mt-1">Einheit: $\text{m/s}$</span>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Winkelgeschwindigkeit omega -->
+                    <div class="glass-card rounded-2xl p-5 space-y-3 border-l-4 border-l-amber-500">
+                        <h3 class="text-base font-bold text-amber-400 flex items-center gap-2">
+                            <i class="fa-solid fa-rotate-right"></i> 2. Winkelgeschwindigkeit $\omega$
+                        </h3>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Unabhängig vom Abstand $r$ überstreicht die gesamte starre Scheibe in einer Zeitspanne den gleichen Drehwinkel. Die **Winkelgeschwindigkeit $\omega$** beschreibt diese Überstreichungsrate:
+                        </p>
+                        <div class="formula-box p-3 rounded-lg text-xs font-mono text-amber-300">
+                            $$\omega = \frac{\Delta \varphi}{\Delta t} = \frac{2\pi}{T}$$
+                            <span class="text-[10px] text-slate-400 block mt-1">Einheit: $\text{1/s}$</span>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Connection -->
+                    <div class="glass-panel p-4 rounded-xl border border-sky-500/30 text-xs">
+                        <h4 class="font-bold text-sky-300 mb-1 flex items-center gap-1.5">
+                            <i class="fa-solid fa-link"></i> Zusammenfügen: $v = \omega \cdot r$
+                        </h4>
+                        <p class="text-slate-300 leading-relaxed">
+                            Setzt man $\omega = \frac{2\pi}{T}$ in $v = \frac{2\pi r}{T}$ ein, erhält man die direkte Verknüpfung: Die Bahngeschwindigkeit $v$ wächst proportional mit dem Abstand $r$!
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Right Column: Interactive Turntable Canvas -->
+                <div class="lg:col-span-7 glass-panel rounded-2xl p-5 border border-slate-800 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="font-bold text-white text-sm flex items-center gap-2">
+                                <i class="fa-solid fa-compact-disc text-amber-400"></i> Interaktives Modell: Rotierende Drehscheibe
+                            </h3>
+                            <p class="text-xs text-slate-400">Gleicher Drehwinkel $\Delta \varphi$, aber verschiedene Bogenlängen $s_A < s_B$ in gleichen Zeitintervallen $\Delta t$</p>
+                        </div>
+                    </div>
+
+                    <!-- Canvas -->
+                    <div class="canvas-container bg-slate-950 rounded-xl overflow-hidden aspect-square max-h-[380px] w-full border border-slate-800 relative flex items-center justify-center">
+                        <canvas id="diskCanvas" class="w-full h-full block"></canvas>
+                    </div>
+
+                    <!-- Disk Controls -->
+                    <div class="flex flex-wrap items-center justify-between gap-3 text-xs pt-1">
+                        <div class="flex items-center gap-2">
+                            <button id="btnToggleDisk" class="px-3.5 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold transition flex items-center gap-1.5 shadow-lg shadow-amber-600/20">
+                                <i class="fa-solid fa-pause" id="diskPlayIcon"></i> <span id="diskBtnText">Pause</span>
+                            </button>
+                            <button id="btnShowArcs" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-sky-300 font-semibold border border-slate-700 transition flex items-center gap-1.5">
+                                <i class="fa-solid fa-chart-pie"></i> Kreisbögen $\Delta t$ anzeigen
+                            </button>
+                        </div>
+
+                        <div class="flex items-center gap-2 text-slate-400">
+                            <span>Winkelgeschw. $\omega$:</span>
+                            <input type="range" id="diskSpeedInput" min="0.2" max="1.8" step="0.1" value="0.8" class="w-24 h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer">
+                            <span id="diskOmegaVal" class="font-mono text-amber-400 text-xs w-10">0.8 1/s</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 text-xs text-slate-300">
+                        <strong class="text-amber-300 block mb-0.5"><i class="fa-solid fa-lightbulb"></i> Erkenntnis aus den Kreisbögen:</strong>
+                        In einem festen Zeitintervall $\Delta t$ drehen sich beide Punkte um genau denselben Winkel $\Delta \varphi = \omega \cdot \Delta t$. Bei höherem $\omega$ ist der Kreisbogen entsprechend größer. Da Kind B ($r_B = 3 r_A$) auf dem äußeren Bogen eine viel größere Strecke zurücklegt ($s_B = 3 \cdot s_A$), ist seine Bahngeschwindigkeit $v_B = 3 \cdot v_A$!
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SECTION 3: Einstiegsexperiment Zentripetalkraft -->
+        <section id="einstiegsexperiment" class="space-y-6 pt-4">
+            <div class="border-b border-slate-800 pb-3 flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-rose-500/20 text-rose-400 flex items-center justify-center font-bold text-sm">3</div>
+                <div>
+                    <h2 class="text-xl font-bold text-white">Einstiegsexperiment: Die Idee der Zentripetalkraft $F_z$</h2>
+                    <p class="text-xs text-slate-400">Wie bringt man einen geradlinig fahrenden Wagen auf eine Kreisbahn?</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                
+                <!-- Interactive Canvas (Toy Car) -->
+                <div class="lg:col-span-7 glass-panel rounded-2xl p-5 border border-slate-800 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-car text-rose-400"></i>
+                            Einstiegsexperiment: Spielzeugwagen & Seil
+                        </h3>
+                        <span id="carStateBadge" class="text-[11px] font-mono bg-slate-800 text-slate-300 px-2.5 py-1 rounded-md border border-slate-700">
+                            Status: Geradlinig (Keine Kraft)
+                        </span>
+                    </div>
+
+                    <!-- Canvas Container -->
+                    <div class="canvas-container bg-slate-950 rounded-xl overflow-hidden aspect-[16/9] w-full border border-slate-800 relative flex items-center justify-center">
+                        <canvas id="entryCanvas" class="w-full h-full block"></canvas>
+                        
+                        <!-- Toast Banner -->
+                        <div id="ropeOverlay" class="hidden absolute top-3 left-1/2 -translate-x-1/2 bg-sky-950/90 border border-sky-500/50 text-sky-200 text-xs px-4 py-2 rounded-lg shadow-xl backdrop-blur-md text-center">
+                            <i class="fa-solid fa-circle-nodes text-sky-400 mr-1"></i>
+                            <strong>Seil gespannt!</strong> Es wirkt die Zentripetalkraft $\vec{F}_z \implies$ Der Wagen wird ohne Sprung auf eine Kreisbahn gezwungen.
+                        </div>
+                    </div>
+
+                    <!-- Controls -->
+                    <div class="flex flex-wrap items-center justify-between gap-3 text-xs pt-1">
+                        <div class="flex items-center gap-2">
+                            <button id="btnAttachRope" class="px-4 py-2 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-bold transition flex items-center gap-2 shadow-lg shadow-sky-500/20">
+                                <i class="fa-solid fa-link"></i> Seil befestigen & spannen!
+                            </button>
+                            <button id="btnResetCar" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold transition flex items-center gap-1.5">
+                                <i class="fa-solid fa-rotate-left"></i> Neustart
+                            </button>
+                        </div>
+
+                        <div class="flex items-center gap-2 text-slate-400">
+                            <span>Geschwindigkeit $v$:</span>
+                            <input type="range" id="carSpeedInput" min="1" max="4" step="0.5" value="2" class="w-24 h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Physics Explanation -->
+                <div class="lg:col-span-5 space-y-4">
+                    <div class="glass-card rounded-2xl p-5 space-y-3 border-l-4 border-l-rose-500">
+                        <h3 class="text-sm font-bold text-rose-300 flex items-center gap-2">
+                            <i class="fa-solid fa-lightbulb"></i> Kernerkenntnis
+                        </h3>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Ohne Einwirkung einer Kraft fährt der Wagen aufgrund seiner **Trägheit** geradlinig-gleichförmig weiter (<strong>1. Newtonsches Axiom</strong>).
+                        </p>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Sobald das Seil gespannt wird, zieht eine Kraft zum Mittelpunkt. Man nennt sie <strong>Zentripetalkraft $F_z$</strong>.
+                        </p>
+                        <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 text-xs text-sky-300 font-mono">
+                            $$\text{Kreisbewegung} \iff \text{Zentripetalkraft } F_z \text{ wirkt zum Zentrum}$$
+                        </div>
+                    </div>
+
+                    <div class="glass-card rounded-2xl p-5 space-y-2">
+                        <h4 class="text-xs font-bold text-white flex items-center gap-1.5">
+                            <i class="fa-solid fa-circle-dot text-sky-400"></i> Bezeichnung $F_z$
+                        </h4>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Der Buchstabe $z$ steht für <em>zentripetal</em> (mittelpunktsuchend). $F_z$ ist der Vektorpfeil, der vom Körper in Richtung des Drehzentrums zeigt.
+                        </p>
+                    </div>
+
+                    <div class="glass-panel p-4 rounded-xl border border-indigo-500/30">
+                        <a href="kreisbewegungen_labor_trainer.html" class="flex items-center justify-between text-xs font-bold text-sky-400 hover:text-sky-300 transition">
+                            <span><i class="fa-solid fa-flask mr-1"></i> Zum Vektor-Labor & Wissenstest</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Banner to Herleitung -->
+        <section class="glass-panel rounded-2xl p-8 border border-indigo-500/30 bg-gradient-to-r from-indigo-950/60 to-slate-900 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="space-y-2 max-w-2xl">
+                <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-square-root-variable text-indigo-400"></i>
+                    Du kennst jetzt die Idee von $F_z$ – aber wie groß ist sie?
+                </h3>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    Leite die Formel $F_z = m \cdot \frac{v^2}{r}$ selbst geometrisch her, Schritt für Schritt geführt – inklusive einer
+                    ausführlich aufgedröselten Erklärung, warum die entscheidenden Winkel in der Konstruktion gleich groß sind.
+                </p>
+            </div>
+            <a href="kreisbewegungen_herleitung.html" class="px-6 py-3.5 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-400 hover:to-purple-500 text-white font-bold text-sm transition shadow-xl shadow-indigo-500/25 flex items-center gap-2 whitespace-nowrap">
+                <span>Zentripetalkraft selbst herleiten</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+        </section>
+
+        <!-- SECTION 4: Anwendungsbeispiele & Quiz -->
+        <section id="praxis" class="space-y-6 pt-4">
+            <div class="border-b border-slate-800 pb-3 flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-sm">4</div>
+                <div>
+                    <h2 class="text-xl font-bold text-white">Anwendungsbeispiele im Alltag: Welche Kraft wirkt als $F_z$?</h2>
+                    <p class="text-xs text-slate-400">Finde selbst heraus, welche reale physikalische Kraft jeweils als Zentripetalkraft dient!</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                <!-- Quiz Card 1: Kurvenfahrt Auto -->
+                <div class="glass-card rounded-2xl p-5 space-y-4 flex flex-col justify-between">
+                    <div>
+                        <div class="w-full bg-slate-950 p-3 rounded-xl border border-slate-800 flex items-center justify-center mb-3">
+                            <svg viewBox="0 0 160 100" class="w-full h-auto max-w-[140px]">
+                                <path d="M 10,80 Q 80,80 140,20" fill="none" stroke="#334155" stroke-width="24" stroke-linecap="round"/>
+                                <path d="M 10,80 Q 80,80 140,20" fill="none" stroke="#f43f5e" stroke-width="2" stroke-dasharray="3,3"/>
+                                <rect x="70" y="55" width="20" height="12" rx="3" fill="#38bdf8" transform="rotate(-25 80 61)"/>
+                                <line x1="75" y1="60" x2="45" y2="40" stroke="#ef4444" stroke-width="2.5" marker-end="url(#arrowQuiz)"/>
+                                <text x="35" y="35" fill="#ef4444" font-size="10" font-weight="bold" font-family="JetBrains Mono">F_z</text>
+                                <defs>
+                                    <marker id="arrowQuiz" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#ef4444"/>
+                                    </marker>
+                                </defs>
+                            </svg>
+                        </div>
+                        <h3 class="font-bold text-white text-sm">1. Kurvenfahrt eines Autos</h3>
+                        <p class="text-xs text-slate-300 mt-1">Welche Kraft verhindert, dass das Auto aus der Kurve rutscht?</p>
+                    </div>
+
+                    <div class="space-y-2 pt-2">
+                        <button onclick="checkAppQuiz(0, 'A')" class="w-full text-left p-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs transition">A) Die Motorkraft</button>
+                        <button onclick="checkAppQuiz(0, 'B')" class="w-full text-left p-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs transition">B) Die Haftreibungskraft der Reifen</button>
+                        <button onclick="checkAppQuiz(0, 'C')" class="w-full text-left p-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs transition">C) Die Luftwiderstandskraft</button>
+                        <div id="appQuizFeedback0" class="hidden p-2.5 rounded-lg text-xs leading-relaxed"></div>
+                    </div>
+                </div>
+
+                <!-- Quiz Card 2: Satellit -->
+                <div class="glass-card rounded-2xl p-5 space-y-4 flex flex-col justify-between">
+                    <div>
+                        <div class="w-full bg-slate-950 p-3 rounded-xl border border-slate-800 flex items-center justify-center mb-3">
+                            <svg viewBox="0 0 160 100" class="w-full h-auto max-w-[140px]">
+                                <circle cx="80" cy="50" r="22" fill="#0284c7"/>
+                                <circle cx="80" cy="50" r="38" fill="none" stroke="#334155" stroke-width="1.5" stroke-dasharray="3,3"/>
+                                <rect x="114" y="46" width="8" height="8" fill="#f59e0b"/>
+                                <line x1="114" y1="50" x2="90" y2="50" stroke="#ef4444" stroke-width="2.5" marker-end="url(#arrowQuiz)"/>
+                                <text x="96" y="42" fill="#ef4444" font-size="10" font-weight="bold" font-family="JetBrains Mono">F_z</text>
+                            </svg>
+                        </div>
+                        <h3 class="font-bold text-white text-sm">2. Satellit auf Erdumlaufbahn</h3>
+                        <p class="text-xs text-slate-300 mt-1">Welche Kraft hält den Satelliten in seiner Kreisbahn um die Erde?</p>
+                    </div>
+
+                    <div class="space-y-2 pt-2">
+                        <button onclick="checkAppQuiz(1, 'A')" class="w-full text-left p-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs transition">A) Die Gravitationskraft der Erde</button>
+                        <button onclick="checkAppQuiz(1, 'B')" class="w-full text-left p-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs transition">B) Der Solardruck des Lichts</button>
+                        <button onclick="checkAppQuiz(1, 'C')" class="w-full text-left p-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs transition">C) Der Raketenrückstoß</button>
+                        <div id="appQuizFeedback1" class="hidden p-2.5 rounded-lg text-xs leading-relaxed"></div>
+                    </div>
+                </div>
+
+                <!-- Quiz Card 3: Hammerwurf -->
+                <div class="glass-card rounded-2xl p-5 space-y-4 flex flex-col justify-between">
+                    <div>
+                        <div class="w-full bg-slate-950 p-3 rounded-xl border border-slate-800 flex items-center justify-center mb-3">
+                            <svg viewBox="0 0 160 100" class="w-full h-auto max-w-[140px]">
+                                <circle cx="80" cy="50" r="6" fill="#10b981"/>
+                                <circle cx="80" cy="50" r="32" fill="none" stroke="#334155" stroke-width="1.5" stroke-dasharray="3,3"/>
+                                <line x1="80" y1="50" x2="112" y2="50" stroke="#94a3b8" stroke-width="1.5"/>
+                                <circle cx="112" cy="50" r="5" fill="#f8fafc"/>
+                                <line x1="112" y1="50" x2="90" y2="50" stroke="#ef4444" stroke-width="2.5" marker-end="url(#arrowQuiz)"/>
+                                <text x="96" y="42" fill="#ef4444" font-size="10" font-weight="bold" font-family="JetBrains Mono">F_z</text>
+                            </svg>
+                        </div>
+                        <h3 class="font-bold text-white text-sm">3. Hammerwurf / Kettenkarussell</h3>
+                        <p class="text-xs text-slate-300 mt-1">Welche Kraft zieht die rotierende Kugel zum Mittelpunkt?</p>
+                    </div>
+
+                    <div class="space-y-2 pt-2">
+                        <button onclick="checkAppQuiz(2, 'A')" class="w-full text-left p-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs transition">A) Die Auftriebskraft</button>
+                        <button onclick="checkAppQuiz(2, 'B')" class="w-full text-left p-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs transition">B) Die Seilspannkraft</button>
+                        <button onclick="checkAppQuiz(2, 'C')" class="w-full text-left p-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs transition">C) Die Reibung mit der Luft</button>
+                        <div id="appQuizFeedback2" class="hidden p-2.5 rounded-lg text-xs leading-relaxed"></div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Banner to Lab & Quiz -->
+        <section class="glass-panel rounded-2xl p-8 border border-sky-500/30 bg-gradient-to-r from-sky-950/60 to-slate-900 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="space-y-2 max-w-2xl">
+                <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-flask text-sky-400"></i>
+                    Bereit für die Vektor-Simulation & den Wissenstest?
+                </h3>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    Experimentiere im interaktiven Labor mit $r, \omega, m$, analysiere Vektoren, simuliere das Faden-Schneiden mit Kreissektor-Anzeige und teste dein Wissen mit 12 LehrplanPLUS-Aufgaben!
+                </p>
+            </div>
+            <a href="kreisbewegungen_labor_trainer.html" class="px-6 py-3.5 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-bold text-sm transition shadow-xl shadow-sky-500/25 flex items-center gap-2 whitespace-nowrap">
+                <span>Labor & Quiz öffnen</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+        </section>
+
+    </main>
+
+    <footer class="glass-panel border-t border-slate-800 mt-12 py-6 text-center text-xs text-slate-400">
+        <div class="max-w-7xl mx-auto px-4">
+            <p>Interaktive Lernplattform Kreisbewegungen • LehrplanPLUS Gymnasium Bayern (11. Klasse)</p>
+            <p class="text-[11px] text-slate-500 mt-1">Gleichungen: $v = \omega \cdot r \quad | \quad \omega = \frac{2\pi}{T} \quad | \quad F_z = m \cdot \omega^2 r = m \cdot \frac{v^2}{r}$</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        function triggerMathJax() {
+            if (window.MathJax && MathJax.typesetPromise) {
+                MathJax.typesetPromise();
+            }
+        }
+
+        // HELPER 1: Draw Arrow
+        function drawArrowOnCtx(ctx, fromx, fromy, tox, toy, color, width = 2, label = '') {
+            const headlen = 8;
+            const dx = tox - fromx;
+            const dy = toy - fromy;
+            const angle = Math.atan2(dy, dx);
+            const len = Math.hypot(dx, dy);
+
+            if (len < 2) return;
+
+            ctx.save();
+            ctx.strokeStyle = color;
+            ctx.fillStyle = color;
+            ctx.lineWidth = width;
+
+            ctx.beginPath();
+            ctx.moveTo(fromx, fromy);
+            ctx.lineTo(tox, toy);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(tox, toy);
+            ctx.lineTo(tox - headlen * Math.cos(angle - Math.PI / 6), toy - headlen * Math.sin(angle - Math.PI / 6));
+            ctx.lineTo(tox - headlen * Math.cos(angle + Math.PI / 6), toy - headlen * Math.sin(angle + Math.PI / 6));
+            ctx.closePath();
+            ctx.fill();
+
+            if (label) {
+                ctx.font = 'bold 11px JetBrains Mono, monospace';
+                const lx = tox + 10 * Math.cos(angle);
+                const ly = toy + 10 * Math.sin(angle);
+                ctx.fillText(label, lx - 8, ly + 4);
+            }
+            ctx.restore();
+        }
+
+        // HELPER 2: Draw Toy Car Graphic
+        function drawCarGraphic(ctx, x, y, angle) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(angle);
+
+            // Wheels
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(-12, -10, 8, 4);
+            ctx.fillRect(4, -10, 8, 4);
+            ctx.fillRect(-12, 6, 8, 4);
+            ctx.fillRect(4, 6, 8, 4);
+
+            // Car Body
+            ctx.fillStyle = '#0284c7';
+            ctx.beginPath();
+            if (ctx.roundRect) {
+                ctx.roundRect(-14, -8, 28, 16, 4);
+            } else {
+                ctx.rect(-14, -8, 28, 16);
+            }
+            ctx.fill();
+            ctx.strokeStyle = '#38bdf8';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            // Roof / Windshield
+            ctx.fillStyle = '#1e293b';
+            ctx.beginPath();
+            if (ctx.roundRect) {
+                ctx.roundRect(-6, -6, 12, 12, 2);
+            } else {
+                ctx.rect(-6, -6, 12, 12);
+            }
+            ctx.fill();
+
+            // Headlights
+            ctx.fillStyle = '#fef08a';
+            ctx.fillRect(12, -6, 2, 3);
+            ctx.fillRect(12, 3, 2, 3);
+
+            ctx.restore();
+        }
+
+        // ====================================================================
+        // 1. ANIMATED TURNTABLE / DISK CANVAS
+        // ====================================================================
+        let diskCanvas, diskCtx;
+        let btnToggleDisk, diskPlayIcon, diskBtnText, btnShowArcs, diskSpeedInput, diskOmegaVal;
+
+        let isDiskPlaying = true;
+        let showArcs = true;
+        let diskAngle = 0;
+        let diskOmega = 0.8;
+        let lastTimeDisk = performance.now();
+
+        function resizeDiskCanvas() {
+            if (!diskCanvas) return;
+            const container = diskCanvas.parentElement;
+            if (container) {
+                diskCanvas.width = container.clientWidth || 380;
+                diskCanvas.height = container.clientHeight || 380;
+            }
+        }
+
+        function animateDisk(now) {
+            if (!diskCanvas || !diskCtx) return;
+            const dt = Math.min((now - lastTimeDisk) / 1000, 0.1);
+            lastTimeDisk = now;
+
+            if (isDiskPlaying) {
+                diskAngle += diskOmega * dt;
+                diskAngle %= (2 * Math.PI);
+            }
+
+            diskCtx.clearRect(0, 0, diskCanvas.width, diskCanvas.height);
+
+            const centerX = diskCanvas.width / 2;
+            const centerY = diskCanvas.height / 2;
+            const rA = 45;
+            const rB = 135;
+
+            // Turntable Body
+            diskCtx.beginPath();
+            diskCtx.arc(centerX, centerY, rB + 15, 0, 2 * Math.PI);
+            diskCtx.fillStyle = '#1e293b';
+            diskCtx.fill();
+            diskCtx.strokeStyle = '#334155';
+            diskCtx.lineWidth = 2;
+            diskCtx.stroke();
+
+            // Tracks
+            diskCtx.beginPath();
+            diskCtx.arc(centerX, centerY, rA, 0, 2 * Math.PI);
+            diskCtx.strokeStyle = 'rgba(16, 185, 129, 0.4)';
+            diskCtx.lineWidth = 1.5;
+            diskCtx.setLineDash([4, 4]);
+            diskCtx.stroke();
+
+            diskCtx.beginPath();
+            diskCtx.arc(centerX, centerY, rB, 0, 2 * Math.PI);
+            diskCtx.strokeStyle = 'rgba(56, 189, 248, 0.4)';
+            diskCtx.lineWidth = 1.5;
+            diskCtx.stroke();
+            diskCtx.setLineDash([]);
+
+            // Pin
+            diskCtx.beginPath();
+            diskCtx.arc(centerX, centerY, 5, 0, 2 * Math.PI);
+            diskCtx.fillStyle = '#38bdf8';
+            diskCtx.fill();
+
+            // Arc Segments (scaling with omega)
+            if (showArcs) {
+                const deltaPhi = diskOmega * 0.6;
+                const arcStartAngle = diskAngle - deltaPhi;
+
+                // Sector A
+                diskCtx.beginPath();
+                diskCtx.moveTo(centerX, centerY);
+                diskCtx.arc(centerX, centerY, rA, arcStartAngle, diskAngle);
+                diskCtx.fillStyle = 'rgba(16, 185, 129, 0.2)';
+                diskCtx.fill();
+
+                // Sector B
+                diskCtx.beginPath();
+                diskCtx.moveTo(centerX, centerY);
+                diskCtx.arc(centerX, centerY, rB, arcStartAngle, diskAngle);
+                diskCtx.fillStyle = 'rgba(56, 189, 248, 0.12)';
+                diskCtx.fill();
+
+                // Arc Highlights
+                diskCtx.beginPath();
+                diskCtx.arc(centerX, centerY, rA, arcStartAngle, diskAngle);
+                diskCtx.strokeStyle = '#10b981';
+                diskCtx.lineWidth = 3;
+                diskCtx.stroke();
+
+                diskCtx.beginPath();
+                diskCtx.arc(centerX, centerY, rB, arcStartAngle, diskAngle);
+                diskCtx.strokeStyle = '#38bdf8';
+                diskCtx.lineWidth = 3.5;
+                diskCtx.stroke();
+
+                const midArcAngle = diskAngle - deltaPhi / 2;
+                const arcLabelX = centerX + (rB + 14) * Math.cos(midArcAngle);
+                const arcLabelY = centerY + (rB + 14) * Math.sin(midArcAngle);
+                diskCtx.fillStyle = '#38bdf8';
+                diskCtx.font = 'bold 10px JetBrains Mono';
+                diskCtx.fillText('s_B (groß)', arcLabelX - 20, arcLabelY);
+
+                const arcLabelXA = centerX + (rA - 15) * Math.cos(midArcAngle);
+                const arcLabelYA = centerY + (rA - 15) * Math.sin(midArcAngle);
+                diskCtx.fillStyle = '#10b981';
+                diskCtx.font = 'bold 9px JetBrains Mono';
+                diskCtx.fillText('s_A', arcLabelXA - 8, arcLabelYA);
+            }
+
+            // Radial line
+            const refX = centerX + rB * Math.cos(diskAngle);
+            const refY = centerY + rB * Math.sin(diskAngle);
+            diskCtx.beginPath();
+            diskCtx.moveTo(centerX, centerY);
+            diskCtx.lineTo(refX, refY);
+            diskCtx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+            diskCtx.lineWidth = 1.5;
+            diskCtx.stroke();
+
+            // Positions A and B
+            const ax = centerX + rA * Math.cos(diskAngle);
+            const ay = centerY + rA * Math.sin(diskAngle);
+            const bx = centerX + rB * Math.cos(diskAngle);
+            const by = centerY + rB * Math.sin(diskAngle);
+
+            // Child A
+            diskCtx.beginPath();
+            diskCtx.arc(ax, ay, 8, 0, 2 * Math.PI);
+            diskCtx.fillStyle = '#10b981';
+            diskCtx.fill();
+
+            // Child B
+            diskCtx.beginPath();
+            diskCtx.arc(bx, by, 8, 0, 2 * Math.PI);
+            diskCtx.fillStyle = '#38bdf8';
+            diskCtx.fill();
+
+            // Velocity Vector A
+            const vAngleA = diskAngle + Math.PI / 2;
+            const vLenA = diskOmega * 22;
+            drawArrowOnCtx(diskCtx, ax, ay, ax + vLenA * Math.cos(vAngleA), ay + vLenA * Math.sin(vAngleA), '#ef4444', 2.5, 'v_A');
+
+            // Velocity Vector B
+            const vLenB = diskOmega * 66;
+            drawArrowOnCtx(diskCtx, bx, by, bx + vLenB * Math.cos(vAngleA), by + vLenB * Math.sin(vAngleA), '#ef4444', 3, 'v_B = 3 v_A');
+
+            requestAnimationFrame(animateDisk);
+        }
+
+        // ====================================================================
+        // 2. ENTRY SIMULATION: TOY CAR WITH REALISTIC SLACK-TO-TAUT ROPE
+        // ====================================================================
+        let entryCanvas, entryCtx;
+        let btnAttachRope, btnResetCar, carSpeedInput, carStateBadge, ropeOverlay;
+
+        // States: 'STRAIGHT', 'SLACK', 'CIRCULAR'
+        let carState = 'STRAIGHT';
+        let carX = 30;
+        let carY = 0;
+        let carVx = 120;
+        let carVy = 0;
+
+        let centerPivotX = 0;
+        let centerPivotY = 0;
+        let orbitRadius = 0;
+        let ropeTautLength = 110;
+        let carOrbitAngle = 0;
+        let angularSpeed = 0;
+        let currentScalarSpeed = 120;
+        let lastTimeEntry = performance.now();
+
+        function resizeEntryCanvas() {
+            if (!entryCanvas) return;
+            const container = entryCanvas.parentElement;
+            if (container) {
+                entryCanvas.width = container.clientWidth || 600;
+                entryCanvas.height = container.clientHeight || 340;
+            }
+            centerPivotX = entryCanvas.width / 2;
+            centerPivotY = entryCanvas.height / 2 - 15;
+            
+            if (carState === 'STRAIGHT') {
+                carY = centerPivotY + 70; // Always consistently below pivot
+            }
+        }
+
+        function resetEntrySim() {
+            carState = 'STRAIGHT';
+            if (entryCanvas) {
+                centerPivotX = entryCanvas.width / 2;
+                centerPivotY = entryCanvas.height / 2 - 15;
+            }
+            carX = 30;
+            carY = centerPivotY + 70;
+            
+            if (carSpeedInput) currentScalarSpeed = parseFloat(carSpeedInput.value) * 60;
+            carVx = currentScalarSpeed;
+            carVy = 0;
+
+            if (carStateBadge) {
+                carStateBadge.textContent = "Status: Geradlinig (Keine Kraft)";
+                carStateBadge.className = "text-[11px] font-mono bg-slate-800 text-slate-300 px-2.5 py-1 rounded-md border border-slate-700";
+            }
+            if (ropeOverlay) ropeOverlay.classList.add('hidden');
+            if (btnAttachRope) {
+                btnAttachRope.innerHTML = `<i class="fa-solid fa-link"></i> Seil befestigen & spannen!`;
+                btnAttachRope.className = "px-4 py-2 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-bold transition flex items-center gap-2 shadow-lg shadow-sky-500/20";
+            }
+        }
+
+        function drawSlackRope(ctx, x1, y1, x2, y2) {
+            const midX = (x1 + x2) / 2;
+            const midY = (y1 + y2) / 2 + 18; // sag downwards
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.quadraticCurveTo(midX, midY, x2, y2);
+            ctx.strokeStyle = '#f59e0b';
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([4, 3]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+
+        function animateEntrySim(now) {
+            if (!entryCanvas || !entryCtx) return;
+            const dt = Math.min((now - lastTimeEntry) / 1000, 0.1);
+            lastTimeEntry = now;
+
+            entryCtx.clearRect(0, 0, entryCanvas.width, entryCanvas.height);
+
+            // Center Pivot
+            entryCtx.beginPath();
+            entryCtx.arc(centerPivotX, centerPivotY, 7, 0, Math.PI * 2);
+            entryCtx.fillStyle = '#38bdf8';
+            entryCtx.fill();
+            entryCtx.strokeStyle = '#0284c7';
+            entryCtx.lineWidth = 2;
+            entryCtx.stroke();
+            
+            entryCtx.fillStyle = '#94a3b8';
+            entryCtx.font = '10px JetBrains Mono';
+            entryCtx.fillText('Drehzentrum', centerPivotX - 35, centerPivotY - 12);
+
+            let headingAngle = 0;
+
+            if (carState === 'STRAIGHT' || carState === 'SLACK') {
+                carX += carVx * dt;
+                if (carX > entryCanvas.width + 30) {
+                    carX = -20;
+                }
+                headingAngle = 0; // facing right
+
+                // Straight reference line
+                entryCtx.beginPath();
+                entryCtx.moveTo(0, carY);
+                entryCtx.lineTo(entryCanvas.width, carY);
+                entryCtx.strokeStyle = 'rgba(239, 68, 68, 0.15)';
+                entryCtx.setLineDash([5, 5]);
+                entryCtx.stroke();
+                entryCtx.setLineDash([]);
+
+                if (carState === 'SLACK') {
+                    const dx = carX - centerPivotX;
+                    const dy = carY - centerPivotY;
+                    const dist = Math.hypot(dx, dy);
+
+                    // Draw loose rope
+                    drawSlackRope(entryCtx, centerPivotX, centerPivotY, carX, carY);
+
+                    // Transition to taut circular motion when car moves past center and rope reaches full length
+                    if (dx > 0 && dist >= ropeTautLength) {
+                        carState = 'CIRCULAR';
+                        orbitRadius = dist;
+                        carOrbitAngle = Math.atan2(dy, dx);
+                        // Vorzeichen aus dem Drehsinn der einlaufenden Bewegung (r x v) bestimmen,
+                        // sonst kehrt sich die Bewegungsrichtung beim Einrasten auf die Kreisbahn um.
+                        const crossZ = dx * carVy - dy * carVx;
+                        angularSpeed = Math.sign(crossZ) * (currentScalarSpeed / orbitRadius);
+
+                        if (carStateBadge) {
+                            carStateBadge.textContent = "Status: Seil auf Spannung! Zentripetalkraft F_z wirkt";
+                            carStateBadge.className = "text-[11px] font-mono bg-sky-950 text-sky-300 px-2.5 py-1 rounded-md border border-sky-500/40";
+                        }
+                        if (ropeOverlay) ropeOverlay.classList.remove('hidden');
+                        if (btnAttachRope) {
+                            btnAttachRope.innerHTML = `<i class="fa-solid fa-check"></i> Seil gespannt!`;
+                            btnAttachRope.className = "px-4 py-2 rounded-xl bg-emerald-600 text-white font-bold transition flex items-center gap-2";
+                        }
+                    }
+                }
+
+            } else if (carState === 'CIRCULAR') {
+                carOrbitAngle += angularSpeed * dt;
+                carX = centerPivotX + orbitRadius * Math.cos(carOrbitAngle);
+                carY = centerPivotY + orbitRadius * Math.sin(carOrbitAngle);
+                headingAngle = carOrbitAngle + (angularSpeed >= 0 ? Math.PI / 2 : -Math.PI / 2);
+
+                // Circular Track
+                entryCtx.beginPath();
+                entryCtx.arc(centerPivotX, centerPivotY, orbitRadius, 0, Math.PI * 2);
+                entryCtx.strokeStyle = 'rgba(56, 189, 248, 0.25)';
+                entryCtx.setLineDash([4, 4]);
+                entryCtx.lineWidth = 1.5;
+                entryCtx.stroke();
+                entryCtx.setLineDash([]);
+
+                // Taut Tension Rope
+                entryCtx.beginPath();
+                entryCtx.moveTo(centerPivotX, centerPivotY);
+                entryCtx.lineTo(carX, carY);
+                entryCtx.strokeStyle = '#38bdf8';
+                entryCtx.lineWidth = 2;
+                entryCtx.stroke();
+
+                // Centripetal force F_z starts AT car, pointing along rope TOWARDS center
+                // Scales with F_z ∝ v²/r, so the arrow visibly reacts to the speed slider
+                const fVectorLen = Math.max(18, Math.min((currentScalarSpeed * currentScalarSpeed) / orbitRadius * 0.55, 90));
+                const fxEnd = carX + (centerPivotX - carX) * (fVectorLen / orbitRadius);
+                const fyEnd = carY + (centerPivotY - carY) * (fVectorLen / orbitRadius);
+                drawArrowOnCtx(entryCtx, carX, carY, fxEnd, fyEnd, '#3b82f6', 3, 'F_z');
+            }
+
+            // Draw Car
+            drawCarGraphic(entryCtx, carX, carY, headingAngle);
+
+            // Draw Velocity Vector v (scales with the speed slider)
+            const vArrowLen = Math.max(18, Math.min(currentScalarSpeed * 0.35, 85));
+            const vxEnd = carX + vArrowLen * Math.cos(headingAngle);
+            const vyEnd = carY + vArrowLen * Math.sin(headingAngle);
+            drawArrowOnCtx(entryCtx, carX, carY, vxEnd, vyEnd, '#ef4444', 2.5, 'v');
+
+            requestAnimationFrame(animateEntrySim);
+        }
+
+        // ====================================================================
+        // 3. APPLICATION QUIZ LOGIC
+        // ====================================================================
+        function checkAppQuiz(qIdx, choice) {
+            const feedbackEl = document.getElementById(`appQuizFeedback${qIdx}`);
+            if (!feedbackEl) return;
+            feedbackEl.classList.remove('hidden');
+            
+            const correctAnswers = ['B', 'A', 'B'];
+            const explanations = [
+                "Richtig! Die Haftreibung zwischen Reifen und Teer zieht das Auto in die Kurve.",
+                "Richtig! Die Gravitationskraft der Erde wirkt als Zentripetalkraft auf den Satelliten.",
+                "Richtig! Die Seilspannkraft zieht die Kugel auf die Kreisbahn."
+            ];
+
+            if (choice === correctAnswers[qIdx]) {
+                feedbackEl.className = "p-2.5 rounded-lg text-xs bg-emerald-950/80 border border-emerald-500/40 text-emerald-200 mt-2";
+                feedbackEl.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400 mr-1"></i> ${explanations[qIdx]}`;
+            } else {
+                feedbackEl.className = "p-2.5 rounded-lg text-xs bg-rose-950/80 border border-rose-500/40 text-rose-200 mt-2";
+                feedbackEl.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-400 mr-1"></i> Nicht ganz! Richtig ist ${correctAnswers[qIdx]}: ${explanations[qIdx]}`;
+            }
+        }
+
+        // ====================================================================
+        // DOM INITIALIZATION
+        // ====================================================================
+        window.addEventListener('DOMContentLoaded', () => {
+            // Turntable Canvas Elements
+            diskCanvas = document.getElementById('diskCanvas');
+            if (diskCanvas) diskCtx = diskCanvas.getContext('2d');
+            btnToggleDisk = document.getElementById('btnToggleDisk');
+            diskPlayIcon = document.getElementById('diskPlayIcon');
+            diskBtnText = document.getElementById('diskBtnText');
+            btnShowArcs = document.getElementById('btnShowArcs');
+            diskSpeedInput = document.getElementById('diskSpeedInput');
+            diskOmegaVal = document.getElementById('diskOmegaVal');
+
+            if (btnToggleDisk) {
+                btnToggleDisk.addEventListener('click', () => {
+                    isDiskPlaying = !isDiskPlaying;
+                    if (diskPlayIcon && diskBtnText) {
+                        if (isDiskPlaying) {
+                            diskPlayIcon.className = "fa-solid fa-pause";
+                            diskBtnText.textContent = "Pause";
+                        } else {
+                            diskPlayIcon.className = "fa-solid fa-play";
+                            diskBtnText.textContent = "Start";
+                        }
+                    }
+                });
+            }
+
+            if (btnShowArcs) {
+                btnShowArcs.addEventListener('click', () => {
+                    showArcs = !showArcs;
+                    btnShowArcs.classList.toggle('bg-sky-600/30');
+                    btnShowArcs.classList.toggle('border-sky-500/50');
+                });
+            }
+
+            if (diskSpeedInput) {
+                diskSpeedInput.addEventListener('input', () => {
+                    diskOmega = parseFloat(diskSpeedInput.value);
+                    if (diskOmegaVal) diskOmegaVal.textContent = diskOmega.toFixed(1) + ' 1/s';
+                });
+            }
+
+            // Toy Car Canvas Elements
+            entryCanvas = document.getElementById('entryCanvas');
+            if (entryCanvas) entryCtx = entryCanvas.getContext('2d');
+            btnAttachRope = document.getElementById('btnAttachRope');
+            btnResetCar = document.getElementById('btnResetCar');
+            carSpeedInput = document.getElementById('carSpeedInput');
+            carStateBadge = document.getElementById('carStateBadge');
+            ropeOverlay = document.getElementById('ropeOverlay');
+
+            if (btnAttachRope) {
+                btnAttachRope.addEventListener('click', () => {
+                    if (carState === 'STRAIGHT') {
+                        carState = 'SLACK';
+                        const dy = carY - centerPivotY;
+                        ropeTautLength = Math.max(115, Math.abs(dy) + 35);
+
+                        if (carStateBadge) {
+                            carStateBadge.textContent = "Status: Seil fixiert (noch locker)";
+                            carStateBadge.className = "text-[11px] font-mono bg-amber-950 text-amber-300 px-2.5 py-1 rounded-md border border-amber-500/40";
+                        }
+                        btnAttachRope.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Seil wird gestrafft...`;
+                    }
+                });
+            }
+
+            if (btnResetCar) btnResetCar.addEventListener('click', resetEntrySim);
+            if (carSpeedInput) {
+                carSpeedInput.addEventListener('input', () => {
+                    currentScalarSpeed = parseFloat(carSpeedInput.value) * 60;
+                    if (carState !== 'CIRCULAR') {
+                        carVx = currentScalarSpeed;
+                    } else if (orbitRadius > 0) {
+                        const dir = angularSpeed >= 0 ? 1 : -1;
+                        angularSpeed = dir * (currentScalarSpeed / orbitRadius);
+                    }
+                });
+            }
+
+            window.addEventListener('resize', () => {
+                resizeDiskCanvas();
+                resizeEntryCanvas();
+            });
+
+            resizeDiskCanvas();
+            resizeEntryCanvas();
+            resetEntrySim();
+
+            requestAnimationFrame(animateDisk);
+            requestAnimationFrame(animateEntrySim);
+            setTimeout(triggerMathJax, 300);
+        });
+    </script>
+</body>
+</html>
