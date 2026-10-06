@@ -94,10 +94,12 @@
             </div>
             
             <nav class="hidden md:flex items-center space-x-1 text-sm font-medium text-slate-300">
-                <a href="#grundlagen" class="px-3 py-1.5 rounded-lg hover:text-white hover:bg-slate-800 transition"><i class="fa-solid fa-book-open text-emerald-400 mr-1.5"></i>1. Grundgrößen</a>
-                <a href="#geschwindigkeiten" class="px-3 py-1.5 rounded-lg hover:text-white hover:bg-slate-800 transition"><i class="fa-solid fa-gauge-high text-amber-400 mr-1.5"></i>2. $v$ & $\omega$</a>
-                <a href="#einstiegsexperiment" class="px-3 py-1.5 rounded-lg hover:text-white hover:bg-slate-800 transition"><i class="fa-solid fa-car text-rose-400 mr-1.5"></i>3. Idee $F_z$</a>
-                <a href="#praxis" class="px-3 py-1.5 rounded-lg hover:text-white hover:bg-slate-800 transition"><i class="fa-solid fa-graduation-cap text-indigo-400 mr-1.5"></i>4. Alltag & Quiz</a>
+                <span id="navWiederholungItems" class="hidden items-center space-x-1">
+                    <a href="#grundlagen" onclick="return revealWiederholung('grundlagen');" class="px-3 py-1.5 rounded-lg hover:text-white hover:bg-slate-800 transition"><i class="fa-solid fa-book-open text-emerald-400 mr-1.5"></i>1. Grundgrößen</a>
+                    <a href="#geschwindigkeiten" onclick="return revealWiederholung('geschwindigkeiten');" class="px-3 py-1.5 rounded-lg hover:text-white hover:bg-slate-800 transition"><i class="fa-solid fa-gauge-high text-amber-400 mr-1.5"></i>2. $v$ & $\omega$</a>
+                    <a href="#einstiegsexperiment" onclick="return revealWiederholung('einstiegsexperiment');" class="px-3 py-1.5 rounded-lg hover:text-white hover:bg-slate-800 transition"><i class="fa-solid fa-car text-rose-400 mr-1.5"></i>3. Idee $F_z$</a>
+                    <a href="#praxis" onclick="return revealWiederholung('praxis');" class="px-3 py-1.5 rounded-lg hover:text-white hover:bg-slate-800 transition"><i class="fa-solid fa-graduation-cap text-indigo-400 mr-1.5"></i>4. Alltag & Quiz</a>
+                </span>
                 <a href="kreisbewegungen_herleitung.html" class="px-3.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-semibold transition shadow-lg shadow-indigo-600/30 flex items-center gap-1.5">
                     <i class="fa-solid fa-square-root-variable text-xs"></i> Herleitung $F_z$
                 </a>
@@ -119,7 +121,7 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-                <a href="#grundlagen" class="glass-panel rounded-2xl p-6 border border-emerald-500/30 flex flex-col items-center text-center gap-3 group hover:border-emerald-400/50 transition">
+                <a href="#grundlagen" onclick="return revealWiederholung('grundlagen');" class="glass-panel rounded-2xl p-6 border border-emerald-500/30 flex flex-col items-center text-center gap-3 group hover:border-emerald-400/50 transition">
                     <div class="w-14 h-14 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-lg shadow-emerald-500/20">
                         <i class="fa-solid fa-book-open text-xl"></i>
                     </div>
@@ -148,6 +150,9 @@
                 </a>
             </div>
         </section>
+
+        <!-- Wiederholungs-Inhalt: standardmäßig ausgeblendet, bis "Grundgrößen zur Wiederholung" angetippt wird -->
+        <div id="wiederholungContent" class="hidden space-y-12">
 
         <!-- SECTION 1: Grundgrößen -->
         <section id="grundlagen" class="space-y-6 pt-2">
@@ -431,8 +436,9 @@
                                 <path d="M 10,80 Q 80,80 140,20" fill="none" stroke="#334155" stroke-width="24" stroke-linecap="round"/>
                                 <path d="M 10,80 Q 80,80 140,20" fill="none" stroke="#f43f5e" stroke-width="2" stroke-dasharray="3,3"/>
                                 <rect x="70" y="55" width="20" height="12" rx="3" fill="#38bdf8" transform="rotate(-25 80 61)"/>
-                                <line x1="75" y1="60" x2="45" y2="40" stroke="#ef4444" stroke-width="2.5" marker-end="url(#arrowQuiz)"/>
-                                <text x="35" y="35" fill="#ef4444" font-size="10" font-weight="bold" font-family="JetBrains Mono">F_z</text>
+                                <!-- F_z zeigt zum Krümmungsmittelpunkt der Bézier-Kurve (senkrecht zur Tangente bei t=0.5) -->
+                                <line x1="78" y1="60" x2="62" y2="26" stroke="#ef4444" stroke-width="2.5" marker-end="url(#arrowQuiz)"/>
+                                <text x="34" y="18" fill="#ef4444" font-size="10" font-weight="bold" font-family="JetBrains Mono">F_z</text>
                                 <defs>
                                     <marker id="arrowQuiz" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
                                         <path d="M 0 0 L 10 5 L 0 10 z" fill="#ef4444"/>
@@ -520,6 +526,9 @@
                 <i class="fa-solid fa-arrow-right"></i>
             </a>
         </section>
+
+        </div>
+        <!-- /Wiederholungs-Inhalt -->
 
     </main>
 
@@ -778,7 +787,7 @@
         let entryCanvas, entryCtx;
         let btnAttachRope, btnResetCar, carSpeedInput, carStateBadge, ropeOverlay;
 
-        // States: 'STRAIGHT', 'SLACK', 'CIRCULAR'
+        // States: 'STRAIGHT', 'SLACK', 'SNAPPING', 'CIRCULAR'
         let carState = 'STRAIGHT';
         let carX = 30;
         let carY = 0;
@@ -793,6 +802,17 @@
         let angularSpeed = 0;
         let currentScalarSpeed = 120;
         let lastTimeEntry = performance.now();
+
+        // Kurzer, weich eingeblendeter Übergang beim Straffwerden des Seils (statt hartem Ruckler)
+        const SNAP_DURATION = 0.35; // Sekunden
+        let snapStartTime = 0;
+        let snapFromX = 0, snapFromY = 0;
+        let snapStartAngle = 0;
+
+        function smoothstep01(x) {
+            const c = Math.max(0, Math.min(1, x));
+            return c * c * (3 - 2 * c);
+        }
 
         function resizeEntryCanvas() {
             if (!entryCanvas) return;
@@ -894,13 +914,16 @@
 
                     // Transition to taut circular motion when car moves past center and rope reaches full length
                     if (dx > 0 && dist >= ropeTautLength) {
-                        carState = 'CIRCULAR';
+                        carState = 'SNAPPING';
                         orbitRadius = dist;
-                        carOrbitAngle = Math.atan2(dy, dx);
+                        snapStartAngle = Math.atan2(dy, dx);
                         // Vorzeichen aus dem Drehsinn der einlaufenden Bewegung (r x v) bestimmen,
                         // sonst kehrt sich die Bewegungsrichtung beim Einrasten auf die Kreisbahn um.
                         const crossZ = dx * carVy - dy * carVx;
                         angularSpeed = Math.sign(crossZ) * (currentScalarSpeed / orbitRadius);
+                        snapStartTime = now;
+                        snapFromX = carX;
+                        snapFromY = carY;
 
                         if (carStateBadge) {
                             carStateBadge.textContent = "Status: Seil auf Spannung! Zentripetalkraft F_z wirkt";
@@ -914,11 +937,38 @@
                     }
                 }
 
-            } else if (carState === 'CIRCULAR') {
-                carOrbitAngle += angularSpeed * dt;
-                carX = centerPivotX + orbitRadius * Math.cos(carOrbitAngle);
-                carY = centerPivotY + orbitRadius * Math.sin(carOrbitAngle);
-                headingAngle = carOrbitAngle + (angularSpeed >= 0 ? Math.PI / 2 : -Math.PI / 2);
+            } else if (carState === 'SNAPPING' || carState === 'CIRCULAR') {
+                if (carState === 'SNAPPING') {
+                    // Weicher Übergang: Position & Ausrichtung werden über SNAP_DURATION von der
+                    // geraden Weiterfahrt zur Kreisbewegung überblendet, statt hart umzuschalten.
+                    let t = (now - snapStartTime) / 1000;
+                    const finishing = t >= SNAP_DURATION;
+                    if (finishing) t = SNAP_DURATION;
+                    const eased = smoothstep01(t / SNAP_DURATION);
+
+                    const circAngle = snapStartAngle + angularSpeed * t;
+                    const circX = centerPivotX + orbitRadius * Math.cos(circAngle);
+                    const circY = centerPivotY + orbitRadius * Math.sin(circAngle);
+                    const straightX = snapFromX + carVx * t;
+                    const straightY = snapFromY;
+
+                    carX = straightX + (circX - straightX) * eased;
+                    carY = straightY + (circY - straightY) * eased;
+
+                    const targetHeading = circAngle + (angularSpeed >= 0 ? Math.PI / 2 : -Math.PI / 2);
+                    headingAngle = targetHeading * eased;
+
+                    if (finishing) {
+                        // Ab jetzt nahtlos im normalen Kreiswinkel weiterrechnen
+                        carState = 'CIRCULAR';
+                        carOrbitAngle = circAngle;
+                    }
+                } else {
+                    carOrbitAngle += angularSpeed * dt;
+                    carX = centerPivotX + orbitRadius * Math.cos(carOrbitAngle);
+                    carY = centerPivotY + orbitRadius * Math.sin(carOrbitAngle);
+                    headingAngle = carOrbitAngle + (angularSpeed >= 0 ? Math.PI / 2 : -Math.PI / 2);
+                }
 
                 // Circular Track
                 entryCtx.beginPath();
@@ -929,7 +979,7 @@
                 entryCtx.stroke();
                 entryCtx.setLineDash([]);
 
-                // Taut Tension Rope
+                // Taut Tension Rope (folgt der tatsächlichen, ggf. noch überblendeten Wagenposition)
                 entryCtx.beginPath();
                 entryCtx.moveTo(centerPivotX, centerPivotY);
                 entryCtx.lineTo(carX, carY);
@@ -939,9 +989,10 @@
 
                 // Centripetal force F_z starts AT car, pointing along rope TOWARDS center
                 // Scales with F_z ∝ v²/r, so the arrow visibly reacts to the speed slider
+                const distToCenter = Math.hypot(centerPivotX - carX, centerPivotY - carY) || orbitRadius;
                 const fVectorLen = Math.max(18, Math.min((currentScalarSpeed * currentScalarSpeed) / orbitRadius * 0.55, 90));
-                const fxEnd = carX + (centerPivotX - carX) * (fVectorLen / orbitRadius);
-                const fyEnd = carY + (centerPivotY - carY) * (fVectorLen / orbitRadius);
+                const fxEnd = carX + (centerPivotX - carX) * (fVectorLen / distToCenter);
+                const fyEnd = carY + (centerPivotY - carY) * (fVectorLen / distToCenter);
                 drawArrowOnCtx(entryCtx, carX, carY, fxEnd, fyEnd, '#3b82f6', 3, 'F_z');
             }
 
@@ -979,6 +1030,31 @@
                 feedbackEl.className = "p-2.5 rounded-lg text-xs bg-rose-950/80 border border-rose-500/40 text-rose-200 mt-2";
                 feedbackEl.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-400 mr-1"></i> Nicht ganz! Richtig ist ${correctAnswers[qIdx]}: ${explanations[qIdx]}`;
             }
+        }
+
+        // ====================================================================
+        // HAUPTMENÜ: Wiederholungs-Inhalt erst beim Antippen einblenden
+        // ====================================================================
+        function revealWiederholung(targetId) {
+            const content = document.getElementById('wiederholungContent');
+            const navItems = document.getElementById('navWiederholungItems');
+            const wasHidden = content && content.classList.contains('hidden');
+            if (content) content.classList.remove('hidden');
+            if (navItems) {
+                navItems.classList.remove('hidden');
+                navItems.classList.add('flex');
+            }
+            if (wasHidden) {
+                // Die Canvases laufen schon seit dem Laden im Hintergrund, hatten als ausgeblendete
+                // Elemente aber nur Fallback-Maße (clientWidth ist 0 bei display:none) – jetzt nachholen.
+                if (typeof resizeDiskCanvas === 'function') resizeDiskCanvas();
+                if (typeof resizeEntryCanvas === 'function') resizeEntryCanvas();
+            }
+            requestAnimationFrame(() => {
+                const target = document.getElementById(targetId || 'grundlagen');
+                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+            return false; // verhindert den normalen Anker-Sprung, der bei noch ausgeblendetem Ziel ins Leere liefe
         }
 
         // ====================================================================
